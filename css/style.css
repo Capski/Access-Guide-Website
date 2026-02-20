@@ -1,0 +1,487 @@
+:root {
+    /* Color Palette - Warm, Intellectual & Minimalist (Claude-inspired) */
+    --bg-paper: #F9F8F6;
+    /* Lightest */
+    --bg-secondary: #EFEDE8;
+    /* Slightly darker beige for sections */
+    --text-primary: #383838;
+    --text-secondary: #555555;
+    --accent-color: #D97757;
+    /* Terracotta */
+    --accent-hover: #c46647;
+    --ui-border: #D8D4CD;
+    --panel-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+
+    /* MS Access Simulation Colors */
+    --access-bg: #FFFFFF;
+    --access-gray: #F0F0F0;
+    --access-header: #FFFFFF;
+    --access-border: #CCCCCC;
+    --access-red: #A4373A;
+    --access-text: #000000;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-paper);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.nav-logo {
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+p {
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s ease;
+}
+
+/* Utility Classes */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mb-1 {
+    margin-bottom: 0.5rem;
+}
+
+.mb-2 {
+    margin-bottom: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 2rem;
+}
+
+.mt-4 {
+    margin-top: 2rem;
+}
+
+/* Global Navigation */
+header {
+    background-color: var(--bg-paper);
+    /* Sticky header blends with hero */
+    /* border-bottom: 1px solid var(--ui-border); Remove border for cleaner look if desired, or keep subtle */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 1.5rem 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-logo {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    /* Dark text as per sketch */
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+}
+
+.nav-links a {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    position: relative;
+    font-family: 'Merriweather', serif;
+    /* Sketch implies serif nav items? Or clean sans. User said "Access Guide" is serif. Nav looks serif-ish in sketch 1. Let's stick to serif for nav to match sketch vibe. */
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--accent-color);
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background-color: var(--text-primary);
+    border-radius: 2px;
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 4rem 2rem 6rem;
+    /* Top padding handled by header flow usually */
+    background-color: var(--bg-paper);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.hero-text {
+    flex: 1;
+    max-width: 600px;
+}
+
+.hero-text h1 {
+    font-size: 3.5rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+.hero-text p {
+    font-size: 1.2rem;
+    font-family: 'Merriweather', serif;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+.hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    /* Optional */
+}
+
+/* Content Sections (Darker Beige) */
+.section-alt {
+    background-color: var(--bg-secondary);
+    padding: 4rem 2rem;
+}
+
+.content-block {
+    max-width: 800px;
+    margin: 0 auto 4rem;
+    text-align: center;
+}
+
+.content-block .icon {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.content-block h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.content-block p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* Database Pills */
+.pills-container {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.pill {
+    background-color: #D97757;
+    /* A brownish terracotta from sketch */
+    color: white;
+    padding: 0.8rem 2.5rem;
+    border-radius: 50px;
+    font-family: 'Merriweather', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, background-color 0.2s;
+    cursor: default;
+    /* Just visual */
+}
+
+.pill:hover {
+    transform: translateY(-2px);
+    background-color: #ac5e44;
+}
+
+/* Comparison Table */
+.comparison-section {
+    padding: 4rem 0;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+    font-family: 'Merriweather', serif;
+}
+
+.comparison-table th {
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 2px solid var(--text-primary);
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: normal;
+}
+
+.comparison-table td {
+    padding: 1.5rem 1rem;
+    border-bottom: 1px solid #CCC;
+    /* Subtle divider */
+    vertical-align: top;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.comparison-table tr:last-child td {
+    border-bottom: 1px solid var(--text-primary);
+    /* Closer line */
+}
+
+.col-label {
+    width: 20%;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: 'Merriweather', serif;
+}
+
+.col-data {
+    width: 40%;
+}
+
+/* Simulation Container General */
+.main-layout {
+    display: grid;
+    grid-template-columns: 7fr 3fr;
+    gap: 2rem;
+    padding: 2rem 0;
+    min-height: calc(100vh - 80px);
+}
+
+.simulation-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: var(--panel-shadow);
+    overflow: hidden;
+    border: 1px solid var(--ui-border);
+    display: flex;
+    flex-direction: column;
+}
+
+.info-panel {
+    background-color: var(--bg-paper);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: fit-content;
+    position: sticky;
+    top: 100px;
+}
+
+.info-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* FooterStyles */
+.main-footer {
+    background-color: #191919;
+    /* Matte Black */
+    color: #E0E0E0;
+    padding: 4rem 0 2rem;
+    margin-top: 4rem;
+    font-size: 0.9rem;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.footer-brand {
+    flex: 1;
+    min-width: 250px;
+}
+
+.footer-brand p {
+    color: #999;
+    max-width: 300px;
+}
+
+.footer-links {
+    flex: 2;
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.footer-column {
+    min-width: 150px;
+}
+
+.footer-column h4 {
+    color: #FFFFFF;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+}
+
+.footer-column ul {
+    list-style: none;
+}
+
+.footer-column ul li {
+    margin-bottom: 0.8rem;
+}
+
+.footer-column ul li a {
+    color: #999;
+    transition: color 0.2s;
+}
+
+.footer-column ul li a:hover {
+    color: #FFFFFF;
+}
+
+.footer-bottom {
+    border-top: 1px solid #333;
+    padding-top: 2rem;
+    color: #666;
+    font-size: 0.8rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background-color: var(--bg-paper);
+        flex-direction: column;
+        padding: 1rem 0;
+        box-shadow: var(--panel-shadow);
+        text-align: center;
+        z-index: 999;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .hero-section {
+        flex-direction: column-reverse;
+        text-align: center;
+        padding: 2rem 1rem;
+    }
+
+    .hero-text h1 {
+        font-size: 2.5rem;
+    }
+
+    .pills-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main-layout {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .comparison-table tr {
+        margin-bottom: 2rem;
+        display: block;
+        border-bottom: 2px solid #ccc;
+    }
+
+    .col-label {
+        font-weight: bold;
+        background: #e0e0e0;
+        padding: 0.5rem;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 2rem;
+    }
+}

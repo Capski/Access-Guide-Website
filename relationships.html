@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relationships | MS Access Guide</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/simulation.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="container navbar">
+            <div class="nav-logo">Access Guide</div>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tables.html">Tables</a></li>
+                <li><a href="relationships.html">Relationships</a></li>
+                <li><a href="queries.html">Queries</a></li>
+                <li><a href="forms.html">Forms</a></li>
+                <li><a href="reports.html">Reports</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="container main-layout">
+
+        <!-- Left: Simulation -->
+        <div class="simulation-container">
+            <!-- New Simulation Header -->
+            <!-- New Simulation Header -->
+            <div class="access-tabs">
+                <span class="access-tab active" onclick="switchView('design')" id="btn-design">Relationship
+                    Design</span>
+                <span class="access-tab" onclick="switchView('edit')" id="btn-edit">Edit Relationship</span>
+            </div>
+
+            <!-- Canvas Wrapper -->
+            <div class="relationship-canvas" id="canvas">
+
+                <!-- DESIGN VIEW -->
+                <div id="view-design" class="view-section active" style="overflow-x: auto; overflow-y: hidden;">
+                    <div style="min-width: 700px; height: 100%; position: relative;">
+
+                        <!-- Table 1: Tabel Anggota (Members) -->
+                        <div class="table-box" style="top: 30px; left: 50px;">
+                            <div class="table-header">Tabel Anggota</div>
+                            <ul class="table-fields">
+                                <li id="pk-anggota" class="field-pk interactive-area"
+                                    data-title="Primary Key (Kunci Utama)"
+                                    data-desc="Identifikasi unik untuk setiap baris data di dalam tabel. Nilai Primary Key tidak boleh kosong dan tidak boleh ada yang kembar."
+                                    data-partner="fk-anggota">
+                                    <i data-lucide="key" style="width: 10px;"></i> ID Anggota
+                                </li>
+                                <li>Nama Lengkap</li>
+                                <li>Alamat</li>
+                                <li>NoTelp</li>
+                                <li>Email</li>
+                            </ul>
+                        </div>
+
+                        <!-- Table 2: Tabel Buku (Books) -->
+                        <div class="table-box" style="top: 220px; left: 50px;">
+                            <div class="table-header">Tabel Buku</div>
+                            <ul class="table-fields">
+                                <li id="pk-buku" class="field-pk interactive-area"
+                                    data-title="Primary Key (Kunci Utama)"
+                                    data-desc="Identifikasi unik untuk setiap baris data di dalam tabel. Nilai Primary Key tidak boleh kosong dan tidak boleh ada yang kembar."
+                                    data-partner="fk-buku">
+                                    <i data-lucide="key" style="width: 10px;"></i> Kode Buku
+                                </li>
+                                <li>Judul Buku</li>
+                                <li>Penulis</li>
+                                <li>Penerbit</li>
+                                <li>Tahun Terbit</li>
+                            </ul>
+                        </div>
+
+                        <!-- Table 3: Tabel Peminjaman (Loans) -->
+                        <div class="table-box" style="top: 100px; left: 450px;">
+                            <div class="table-header">Tabel Peminjaman</div>
+                            <ul class="table-fields">
+                                <li class="field-pk"><i data-lucide="key" style="width: 10px;"></i> ID Transaksi</li>
+                                <li id="fk-anggota" class="interactive-area" data-title="Foreign Key (Kunci Tamu)"
+                                    data-desc='Kolom yang menghubungkan tabel "anak" ke tabel "induk". Kolom ini berisi nilai yang merujuk langsung ke Primary Key di tabel lain untuk menjalin relasi.'
+                                    data-partner="pk-anggota">
+                                    ID Anggota (FK)
+                                </li>
+                                <li id="fk-buku" class="interactive-area" data-title="Foreign Key (Kunci Tamu)"
+                                    data-desc='Kolom yang menghubungkan tabel "anak" ke tabel "induk". Kolom ini berisi nilai yang merujuk langsung ke Primary Key di tabel lain untuk menjalin relasi.'
+                                    data-partner="pk-buku">
+                                    Kode Buku (FK)
+                                </li>
+                                <li>Tanggal Pinjam</li>
+                                <li>Tanggal Kembali</li>
+                            </ul>
+                        </div>
+
+                        <!-- SVG Lines -->
+                        <svg
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+                            <!-- Anggota to Peminjaman -->
+                            <line id="line-anggota" x1="232" y1="65" x2="450" y2="152" stroke="#444" stroke-width="2"
+                                style="transition: stroke 0.2s;" />
+                            <!-- Buku to Peminjaman -->
+                            <line id="line-buku" x1="232" y1="255" x2="450" y2="175" stroke="#444" stroke-width="2"
+                                style="transition: stroke 0.2s;" />
+                        </svg>
+
+                        <!-- Interactive Relationship Lines (Divs for easier hover) -->
+                        <!-- Anggota -> Peminjaman -->
+                        <div class="line-hit-area interactive-area"
+                            style="top: 65px; left: 232px; width: 220px; height: 90px; transform-origin: 0 0; transform: rotate(21deg);"
+                            data-title="Relationship Line (Garis Relasi)"
+                            data-desc="Garis yang menghubungkan dua tabel (Primary Key ke Foreign Key). Garis ini secara visual menunjukkan bahwa data di kedua tabel tersebut saling terkait."
+                            data-target-line="line-anggota">
+                        </div>
+                        <!-- Label symbols -->
+                        <div class="rel-symbol" style="top: 55px; left: 240px;">1</div>
+                        <div class="rel-symbol" style="top: 130px; left: 430px;">∞</div>
+
+                        <!-- Buku -> Peminjaman -->
+                        <div class="line-hit-area interactive-area"
+                            style="width: 220px; height: 80px; transform-origin: 0 100%; transform: rotate(-20deg); top: 175px; left: 232px;"
+                            data-title="Relationship Line (Garis Relasi)"
+                            data-desc="Garis yang menghubungkan dua tabel (Primary Key ke Foreign Key). Garis ini secara visual menunjukkan bahwa data di kedua tabel tersebut saling terkait."
+                            data-target-line="line-buku">
+                        </div>
+                        <!-- Label symbols -->
+                        <div class="rel-symbol" style="top: 235px; left: 240px;">1</div>
+                        <div class="rel-symbol" style="top: 155px; left: 430px;">∞</div>
+
+                    </div>
+                </div>
+
+                <!-- EDIT VIEW -->
+                <div id="view-edit" class="view-section hidden">
+                    <div class="edit-view-wrapper">
+                        <div class="modern-dialog">
+                            <div class="dialog-header-bar">
+                                <span>Edit Relationships</span>
+                                <i data-lucide="x" style="cursor: pointer; width:18px;"
+                                    onclick="switchView('design')"></i>
+                            </div>
+                            <div class="dialog-body">
+
+                                <div class="dialog-row">
+                                    <div class="dialog-col">
+                                        <label class="dialog-label">Table/Query:</label>
+                                        <select class="modern-select">
+                                            <option>Tabel Buku</option>
+                                        </select>
+                                    </div>
+                                    <div class="dialog-col">
+                                        <label class="dialog-label">Related Table/Query:</label>
+                                        <select class="modern-select">
+                                            <option>Tabel Peminjaman</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="dialog-group">
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-item interact-hover"
+                                            data-title="Enforce Referential Integrity"
+                                            data-desc='Aturan "Polisi Data" yang menjaga konsistensi. Mencegah kamu memasukkan data "anak" (Foreign Key) yang tidak punya "induk" (Primary Key) yang sah. Contoh: Tidak boleh ada "Pesanan" untuk "Pelanggan" yang datanya belum terdaftar.'>
+                                            <input type="checkbox" checked>
+                                            <span class="checkbox-label">Enforce Referential Integrity</span>
+                                        </label>
+
+                                        <label class="checkbox-item interact-hover"
+                                            data-title="Cascade Update Related Fields"
+                                            data-desc="Jika kamu mengubah ID di tabel induk, semua data terkait di tabel anak akan otomatis ikut berubah. Kamu tidak perlu mengedit data manual satu per satu.">
+                                            <input type="checkbox" checked>
+                                            <span class="checkbox-label">Cascade Update Related Fields</span>
+                                        </label>
+
+                                        <label class="checkbox-item interact-hover"
+                                            data-title="Cascade Delete Related Records"
+                                            data-desc="Hati-hati! Jika data di tabel induk dihapus (misal: Pelanggan dihapus), maka semua data transaksi milik pelanggan tersebut di tabel anak akan otomatis terhapus bersih.">
+                                            <input type="checkbox" checked>
+                                            <span class="checkbox-label">Cascade Delete Related Records</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="relationship-type-display interact-hover"
+                                    data-title="Relationship Type: One-to-Many"
+                                    data-desc="Menunjukkan bahwa satu baris di Tabel Induk bisa terhubung ke banyak baris di Tabel Anak. Contoh: 1 Customer (Satu) bisa punya Banyak Order (Many). Ini adalah jenis relasi yang paling umum digunakan.">
+                                    <span>Relationship Type:</span>
+                                    <strong>One-To-Many</strong>
+                                </div>
+
+                                <div class="btn-row">
+                                    <button class="dialog-btn btn-secondary"
+                                        onclick="switchView('design')">Cancel</button>
+                                    <button class="dialog-btn btn-primary" onclick="switchView('design')">OK</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Right: Info Panel -->
+        <aside class="info-panel">
+            <div class="info-content">
+                <h2 id="info-title" class="fade-in">Relationships</h2>
+                <p id="info-desc" class="fade-in">
+                    Relationship (Relasi) adalah inti dari database 'Relasional'. Fitur ini menghubungkan tabel-tabel
+                    data sehingga kamu tidak perlu menduplikasi informasi. Arahkan kursor (*hover*) pada tabel dan garis
+                    di *Design View*. Beralih ke tab 'Edit Relationship' untuk melihat pengaturan integritas data.
+                </p>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="nav-logo" style="color: white; margin-bottom: 1rem;">Access Guide</div>
+                <p>Panduan interaktif untuk mempelajari Microsoft Access dengan mudah.</p>
+            </div>
+
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Overview</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="tables.html">Tables</a></li>
+                        <li><a href="relationships.html">Relationships</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Advanced</h4>
+                    <ul>
+                        <li><a href="queries.html">Queries</a></li>
+                        <li><a href="forms.html">Forms</a></li>
+                        <li><a href="reports.html">Reports</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>&copy; 2026 Access Guide Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/global.js"></script>
+    <script src="js/interactions.js"></script>
+    <script>
+        lucide.createIcons();
+
+        function switchView(viewName) {
+            // Hide all views
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(view => {
+                view.classList.remove('active');
+                view.classList.add('hidden');
+            });
+
+            // Show target view
+            const targetView = document.getElementById('view-' + viewName);
+            targetView.classList.remove('hidden');
+            setTimeout(() => targetView.classList.add('active'), 10);
+
+            // Update buttons
+            const buttons = document.querySelectorAll('.access-tab'); // Updated class
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            const activeBtn = document.getElementById('btn-' + viewName);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            // Update Context Panel
+            const infoTitle = document.getElementById('info-title');
+            const infoDesc = document.getElementById('info-desc');
+
+            // Remove animation class
+            infoTitle.classList.remove('fade-in');
+            infoDesc.classList.remove('fade-in');
+
+            // Force reflow
+            void infoTitle.offsetWidth;
+
+            // Update Text
+            if (viewName === 'edit') {
+                infoTitle.textContent = "Edit Relationship";
+                infoDesc.innerHTML = "Dialog ini mengonfigurasi Aturan (*Rules*) dari sebuah relasi. Mengaktifkan *Enforce Referential Integrity* akan mencegah masuknya data yang tidak valid. Sementara itu, opsi *Cascade* berfungsi untuk mengotomatiskan proses pembaruan (*update*) dan penghapusan (*delete*) data yang saling terhubung.";
+            } else {
+                infoTitle.textContent = "Relationships";
+                infoDesc.innerHTML = "Relationship (Relasi) adalah inti dari database 'Relasional'. Fitur ini menghubungkan tabel-tabel data sehingga kamu tidak perlu menduplikasi informasi. Arahkan kursor (*hover*) pada tabel dan garis di *Design View*. Beralih ke tab 'Edit Relationship' untuk melihat pengaturan integritas data.";
+            }
+            if (window.setInfoDefaults) {
+                window.setInfoDefaults(infoTitle.textContent, infoDesc.innerHTML);
+            }
+
+            // Re-add animation class
+            infoTitle.classList.add('fade-in');
+            infoDesc.classList.add('fade-in');
+        }
+
+        // Additional Interaction Logic
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Paired Field Highlighting
+            const pairedFields = document.querySelectorAll('[data-partner]');
+            pairedFields.forEach(field => {
+                field.addEventListener('mouseenter', () => {
+                    if (window.innerWidth > 768) {
+                        // Highlight Self
+                        field.classList.add('field-highlight');
+                        // Highlight Partner
+                        const partnerId = field.getAttribute('data-partner');
+                        const partner = document.getElementById(partnerId);
+                        if (partner) partner.classList.add('field-highlight');
+                    }
+                });
+
+                field.addEventListener('mouseleave', () => {
+                    if (window.innerWidth > 768) {
+                        // Remove Highlight Field
+                        field.classList.remove('field-highlight');
+                        const partnerId = field.getAttribute('data-partner');
+                        const partner = document.getElementById(partnerId);
+                        if (partner) partner.classList.remove('field-highlight');
+                    }
+                });
+
+                field.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        pairedFields.forEach(f => {
+                            f.classList.remove('field-highlight');
+                            const pId = f.getAttribute('data-partner');
+                            const p = document.getElementById(pId);
+                            if (p) p.classList.remove('field-highlight');
+                        });
+
+                        field.classList.add('field-highlight');
+                        const partnerId = field.getAttribute('data-partner');
+                        const partner = document.getElementById(partnerId);
+                        if (partner) partner.classList.add('field-highlight');
+                    }
+                });
+            });
+
+            // Line Logic
+            const lineHits = document.querySelectorAll('.line-hit-area');
+            lineHits.forEach(area => {
+                area.addEventListener('mouseenter', () => {
+                    if (window.innerWidth > 768) {
+                        const lineId = area.getAttribute('data-target-line');
+                        const line = document.getElementById(lineId);
+                        if (line) {
+                            line.setAttribute('stroke', '#A4373A'); // Access Red
+                            line.setAttribute('stroke-width', '3');
+                        }
+                    }
+                });
+
+                area.addEventListener('mouseleave', () => {
+                    if (window.innerWidth > 768) {
+                        const lineId = area.getAttribute('data-target-line');
+                        const line = document.getElementById(lineId);
+                        if (line) {
+                            line.setAttribute('stroke', '#444');
+                            line.setAttribute('stroke-width', '2');
+                        }
+                    }
+                });
+
+                area.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        document.querySelectorAll('line').forEach(l => {
+                            l.setAttribute('stroke', '#444');
+                            l.setAttribute('stroke-width', '2');
+                        });
+                        const lineId = area.getAttribute('data-target-line');
+                        const line = document.getElementById(lineId);
+                        if (line) {
+                            line.setAttribute('stroke', '#A4373A'); // Access Red
+                            line.setAttribute('stroke-width', '3');
+                        }
+                    }
+                });
+            });
+
+            // NEW: Dialog Hover Logic (interact-hover)
+            const dialogInteracts = document.querySelectorAll('.interact-hover');
+            const infoTitle = document.getElementById('info-title');
+            const infoDesc = document.getElementById('info-desc');
+
+            dialogInteracts.forEach(el => {
+                const showInfo = () => {
+                    const title = el.getAttribute('data-title');
+                    const desc = el.getAttribute('data-desc');
+                    infoTitle.innerText = title;
+                    infoDesc.innerText = desc;
+                    infoTitle.classList.remove('fade-in');
+                    infoDesc.classList.remove('fade-in');
+                    void infoTitle.offsetWidth; // trigger reflow
+                    infoTitle.classList.add('fade-in');
+                    infoDesc.classList.add('fade-in');
+                };
+
+                const hideInfo = () => {
+                    // Reset to default Edit help text
+                    infoTitle.innerText = "Edit Relationship";
+                    infoDesc.innerHTML = "This dialog configures the <strong>Rules</strong> of the relationship.<br><br><strong>Enforce Referential Integrity</strong> prevents invalid data entry.<br><strong>Cascade options</strong> automate updates and deletes.";
+                    infoTitle.classList.remove('fade-in');
+                    infoDesc.classList.remove('fade-in');
+                    void infoTitle.offsetWidth;
+                    infoTitle.classList.add('fade-in');
+                    infoDesc.classList.add('fade-in');
+                };
+
+                el.addEventListener('mouseenter', () => {
+                    if (window.innerWidth > 768) showInfo();
+                });
+
+                el.addEventListener('mouseleave', () => {
+                    if (window.innerWidth > 768) hideInfo();
+                });
+
+                el.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) showInfo();
+                });
+            });
+
+        });
+    </script>
+</body>
+
+</html>

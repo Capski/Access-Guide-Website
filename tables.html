@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Design | MS Access Guide</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/simulation.css">
+    <style>
+        .workspace {
+            position: relative;
+            flex: 1;
+            min-height: 600px;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        .workspace-view {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            flex-direction: column;
+        }
+
+        .workspace-view.active {
+            display: flex;
+        }
+
+        /* --- Datasheet Styles --- */
+        .datasheet-container {
+            padding: 0;
+            overflow: auto;
+            height: 100%;
+            flex: 1;
+        }
+
+        .datasheet-grid {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 600px;
+            table-layout: fixed;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .datasheet-grid th,
+        .datasheet-grid td {
+            border: 1px solid #d0d0d0;
+            padding: 8px 12px;
+            position: relative;
+            cursor: default;
+        }
+
+        .datasheet-grid th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+            text-align: center;
+            color: #333;
+            height: 40px;
+        }
+
+        .datasheet-grid .row-header {
+            background-color: #f5f5f5;
+            width: 100px;
+            text-align: center;
+            font-weight: normal;
+            color: #555;
+        }
+
+        /* Interaction Classes */
+        .hover-col {
+            background-color: rgba(217, 119, 87, 0.1) !important;
+        }
+
+        .hover-row {
+            background-color: rgba(217, 119, 87, 0.1) !important;
+        }
+
+        .hover-cell {
+            background-color: rgba(217, 119, 87, 0.25) !important;
+            border: 2px solid var(--accent-color) !important;
+            z-index: 10;
+        }
+
+        .hover-header-highlight {
+            background-color: var(--accent-color) !important;
+            color: white !important;
+        }
+
+        /* --- Design View Styles (Fixed Layout) --- */
+        .design-view-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            /* Fill parent */
+            overflow: hidden;
+        }
+
+        /* Top: Field List Table - Takes available space */
+        .design-table-container {
+            flex: 1;
+            overflow-y: auto;
+            border-bottom: 2px solid #ccc;
+            min-height: 150px;
+        }
+
+        .design-grid {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .design-grid th {
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ccc;
+            border-right: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .design-grid td {
+            border-bottom: 1px solid #eee;
+            border-right: 1px solid #eee;
+            padding: 6px 10px;
+            vertical-align: middle;
+        }
+
+        .design-row {
+            cursor: pointer;
+        }
+
+        .design-row:hover {
+            background-color: #e0ecff;
+        }
+
+        .design-row.selected {
+            background-color: #cce8ff;
+        }
+
+        /* Bottom: Field Properties - Fixed height relative to container */
+        .design-properties-container {
+            height: 45%;
+            /* Fixed proportion */
+            min-height: 250px;
+            max-height: 500px;
+            display: flex;
+            flex-direction: column;
+            background-color: #f9f9f9;
+            border-top: 4px solid #ddd;
+        }
+
+        .prop-tabs-sm {
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            background: #fff;
+            padding-left: 1rem;
+            flex-shrink: 0;
+            /* Do not shrink */
+        }
+
+        .prop-tab-sm {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-right: 1px solid #eee;
+            border-top: 3px solid transparent;
+        }
+
+        .prop-tab-sm.active {
+            font-weight: bold;
+            background-color: rgba(217, 119, 87, 0.05);
+            color: var(--accent-color);
+            border-top: 3px solid var(--accent-color);
+        }
+
+        /* Scrollable Property List */
+        .prop-list {
+            flex: 1;
+            /* Fill remaining space in properties container */
+            overflow-y: auto;
+            background-color: white;
+            min-height: 0;
+            /* IMPORTANT for flex nesting */
+        }
+
+        .prop-list-item {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            border-bottom: 1px solid #eee;
+            font-size: 0.85rem;
+            min-height: 28px;
+        }
+
+        .prop-list-item:hover {
+            background-color: #fff9e6;
+        }
+
+        .prop-name {
+            background-color: #f0f0f0;
+            padding: 6px 12px;
+            border-right: 1px solid #d0d0d0;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .prop-val {
+            padding: 6px 12px;
+            background-color: #fff;
+            color: #000;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container navbar">
+            <div class="nav-logo">Access Guide</div>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tables.html" class="active">Tables</a></li>
+                <li><a href="relationships.html">Relationships</a></li>
+                <li><a href="queries.html">Queries</a></li>
+                <li><a href="forms.html">Forms</a></li>
+                <li><a href="reports.html">Reports</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="container main-layout">
+
+        <!-- Left: Simulation -->
+        <div class="simulation-container">
+
+            <!-- Tabs -->
+            <div class="access-tabs">
+                <span class="access-tab active interactive-hover" data-view="datasheet"
+                    data-info="Datasheet View: View and edit data in a spreadsheet-like format.">Datasheet View</span>
+                <span class="access-tab interactive-hover" data-view="design"
+                    data-info="Design View: Define fields, data types, and properties.">Design View</span>
+            </div>
+
+            <!-- Workspace -->
+            <div class="workspace">
+
+                <!-- VIEW 1: DATASHEET -->
+                <div id="view-datasheet" class="workspace-view active">
+                    <div class="datasheet-container">
+                        <table class="datasheet-grid" id="ds-table">
+                            <thead>
+                                <tr>
+                                    <th class="row-header"></th>
+                                    <th class="col-header" data-col="1">Field 1</th>
+                                    <th class="col-header" data-col="2">Field 2</th>
+                                    <th class="col-header" data-col="3">Field 3</th>
+                                    <th class="col-header" data-col="4">Field...</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-row="1">
+                                    <td class="row-header">Record 1</td>
+                                    <td class="ds-cell" data-col="1"></td>
+                                    <td class="ds-cell" data-col="2"></td>
+                                    <td class="ds-cell" data-col="3"></td>
+                                    <td class="ds-cell" data-col="4"></td>
+                                </tr>
+                                <tr data-row="2">
+                                    <td class="row-header">Record 2</td>
+                                    <td class="ds-cell" data-col="1"></td>
+                                    <td class="ds-cell" data-col="2"></td>
+                                    <td class="ds-cell" data-col="3"></td>
+                                    <td class="ds-cell" data-col="4"></td>
+                                </tr>
+                                <tr data-row="3">
+                                    <td class="row-header">Record 3</td>
+                                    <td class="ds-cell" data-col="1"></td>
+                                    <td class="ds-cell" data-col="2"></td>
+                                    <td class="ds-cell" data-col="3"></td>
+                                    <td class="ds-cell" data-col="4"></td>
+                                </tr>
+                                <tr data-row="4">
+                                    <td class="row-header">Record...</td>
+                                    <td class="ds-cell" data-col="1"></td>
+                                    <td class="ds-cell" data-col="2"></td>
+                                    <td class="ds-cell" data-col="3"></td>
+                                    <td class="ds-cell" data-col="4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: DESIGN -->
+                <div id="view-design" class="workspace-view">
+                    <div class="design-view-container">
+
+                        <!-- Top: Field List (The Table) -->
+                        <div class="design-table-container">
+                            <table class="design-grid">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px; text-align: center;"></th>
+                                        <th>Field Name</th>
+                                        <th><b>Data Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Fields -->
+                                    <tr class="design-row" data-field="EmployeeID" data-type="Autonumber">
+                                        <td style="text-align: center;"><i data-lucide="key" style="width: 12px;"></i>
+                                        </td>
+                                        <td>EmployeeID</td>
+                                        <td><b>Autonumber</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="FullName" data-type="Short Text">
+                                        <td></td>
+                                        <td>FullName</td>
+                                        <td><b>Short Text</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="Biography" data-type="Long Text">
+                                        <td></td>
+                                        <td>Biography</td>
+                                        <td><b>Long Text</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="OfficeFloor" data-type="Number">
+                                        <td></td>
+                                        <td>OfficeFloor</td>
+                                        <td><b>Number</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="GlobalBadgeID" data-type="Large Number">
+                                        <td></td>
+                                        <td>GlobalBadgeID</td>
+                                        <td><b>Large Number</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="HireDate" data-type="Date/Time">
+                                        <td></td>
+                                        <td>HireDate</td>
+                                        <td><b>Date/Time</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="SystemLogTime" data-type="Date/Time Extended">
+                                        <td></td>
+                                        <td>SystemLogTime</td>
+                                        <td><b>Date/Time Extended</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="MonthlySalary" data-type="Currency">
+                                        <td></td>
+                                        <td>MonthlySalary</td>
+                                        <td><b>Currency</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="IsActive" data-type="Yes/No">
+                                        <td></td>
+                                        <td>IsActive</td>
+                                        <td><b>Yes/No</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="LegacyPhoto" data-type="OLE Object">
+                                        <td></td>
+                                        <td>LegacyPhoto</td>
+                                        <td><b>OLE Object</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="LinkedInProfile" data-type="Hyperlink">
+                                        <td></td>
+                                        <td>LinkedInProfile</td>
+                                        <td><b>Hyperlink</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="ResumeFile" data-type="Attachment">
+                                        <td></td>
+                                        <td>ResumeFile</td>
+                                        <td><b>Attachment</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="AnnualSalary" data-type="Calculated">
+                                        <td></td>
+                                        <td>AnnualSalary</td>
+                                        <td><b>Calculated</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="design-row" data-field="Department" data-type="Lookup Wizard...">
+                                        <td></td>
+                                        <td>Department</td>
+                                        <td><b>Lookup Wizard...</b></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Bottom: Field Properties -->
+                        <div class="design-properties-container">
+                            <div class="prop-tabs-sm">
+                                <div class="prop-tab-sm active" data-ptab="general">General</div>
+                                <div class="prop-tab-sm" data-ptab="lookup">Lookup</div>
+                            </div>
+
+                            <!-- General Properties List (Scrollable) -->
+                            <div id="props-general" class="prop-list">
+                                <div class="prop-list-item" data-prop="Field Size">
+                                    <div class="prop-name">Field Size</div>
+                                    <div class="prop-val">255, Long Integer</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="New Values">
+                                    <div class="prop-name">New Values</div>
+                                    <div class="prop-val">Increment</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Format">
+                                    <div class="prop-name">Format</div>
+                                    <div class="prop-val">(Blank), Currency</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Decimal Places">
+                                    <div class="prop-name">Decimal Places</div>
+                                    <div class="prop-val">Auto</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Input Mask">
+                                    <div class="prop-name">Input Mask</div>
+                                    <div class="prop-val">(Blank)</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Caption">
+                                    <div class="prop-name">Caption</div>
+                                    <div class="prop-val">(Blank)</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Default Value">
+                                    <div class="prop-name">Default Value</div>
+                                    <div class="prop-val">(Blank), 0</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Validation Rule">
+                                    <div class="prop-name">Validation Rule</div>
+                                    <div class="prop-val">(Blank)</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Validation Text">
+                                    <div class="prop-name">Validation Text</div>
+                                    <div class="prop-val">(Blank)</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Required">
+                                    <div class="prop-name">Required</div>
+                                    <div class="prop-val">No</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Allow Zero Length">
+                                    <div class="prop-name">Allow Zero Length</div>
+                                    <div class="prop-val">Yes</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Indexed">
+                                    <div class="prop-name">Indexed</div>
+                                    <div class="prop-val">No</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Unicode Compression">
+                                    <div class="prop-name">Unicode Compression</div>
+                                    <div class="prop-val">Yes</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="IME Mode">
+                                    <div class="prop-name">IME Mode</div>
+                                    <div class="prop-val">No Control</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="IME Sentence Mode">
+                                    <div class="prop-name">IME Sentence Mode</div>
+                                    <div class="prop-val">None</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Text Format">
+                                    <div class="prop-name">Text Format</div>
+                                    <div class="prop-val">Plain Text</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Text Align">
+                                    <div class="prop-name">Text Align</div>
+                                    <div class="prop-val">General</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Append Only">
+                                    <div class="prop-name">Append Only</div>
+                                    <div class="prop-val">No</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Show Date Picker">
+                                    <div class="prop-name">Show Date Picker</div>
+                                    <div class="prop-val">For dates</div>
+                                </div>
+                            </div>
+
+                            <!-- Lookup Properties List (Scrollable) -->
+                            <div id="props-lookup" class="prop-list" style="display: none;">
+                                <div class="prop-list-item" data-prop="Display Control">
+                                    <div class="prop-name">Display Control</div>
+                                    <div class="prop-val">Text Box / List Box / Combo Box</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Row Source Type">
+                                    <div class="prop-name">Row Source Type</div>
+                                    <div class="prop-val">Table/Query</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Row Source">
+                                    <div class="prop-name">Row Source</div>
+                                    <div class="prop-val">(Empty)</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Bound Column">
+                                    <div class="prop-name">Bound Column</div>
+                                    <div class="prop-val">1</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Column Count">
+                                    <div class="prop-name">Column Count</div>
+                                    <div class="prop-val">1</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Column Heads">
+                                    <div class="prop-name">Column Heads</div>
+                                    <div class="prop-val">No</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="Column Widths">
+                                    <div class="prop-name">Column Widths</div>
+                                    <div class="prop-val">1";2"</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="List Rows">
+                                    <div class="prop-name">List Rows</div>
+                                    <div class="prop-val">16</div>
+                                </div>
+                                <div class="prop-list-item" data-prop="List Width">
+                                    <div class="prop-name">List Width</div>
+                                    <div class="prop-val">Auto</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Right: Info Panel -->
+        <aside class="info-panel">
+            <div class="info-content">
+                <h2 id="info-title" class="fade-in">Tables</h2>
+                <p id="info-desc" class="fade-in">
+                    Tables are the stand-alone storage containers for data in Access.<br><br>
+                    <strong>Datasheet View:</strong> Displays data in a grid (Standard Excel-like view).<br>
+                    <strong>Design View:</strong> Defines the structure (fields, data types) of the table.
+                </p>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="nav-logo" style="color: white; margin-bottom: 1rem;">Access Guide</div>
+                <p>Panduan interaktif untuk mempelajari Microsoft Access dengan mudah.</p>
+            </div>
+
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Overview</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="tables.html">Tables</a></li>
+                        <li><a href="relationships.html">Relationships</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Advanced</h4>
+                    <ul>
+                        <li><a href="queries.html">Queries</a></li>
+                        <li><a href="forms.html">Forms</a></li>
+                        <li><a href="reports.html">Reports</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>&copy; 2026 Access Guide Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/global.js"></script>
+    <script>
+        lucide.createIcons();
+
+
+        // Interaction Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const infoTitle = document.getElementById('info-title');
+            const infoDesc = document.getElementById('info-desc');
+            const datasheetView = document.getElementById('view-datasheet');
+            const designView = document.getElementById('view-design');
+
+            // New Tab Logic
+            const tabs = document.querySelectorAll('.access-tab');
+
+            // --- View Switching ---
+            function switchView(viewName) {
+                // Reset styles
+                tabs.forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.workspace-view').forEach(c => c.classList.remove('active'));
+
+                if (viewName === 'datasheet') {
+                    document.querySelector('.access-tab[data-view="datasheet"]').classList.add('active');
+                    datasheetView.classList.add('active');
+                    updateInfo('Datasheet View', 'Tampilan standar berbentuk grid (baris dan kolom) untuk melihat, menambah, atau mengedit data secara langsung.');
+                } else {
+                    document.querySelector('.access-tab[data-view="design"]').classList.add('active');
+                    designView.classList.add('active');
+                    updateInfo('Design View', 'Tampilan "di balik layar" untuk mengontrol dan merancang struktur tabel secara penuh. Di sini kamu menentukan nama kolom dan aturan datanya.');
+                }
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchView(tab.dataset.view);
+                });
+            });
+
+            // Initial render
+            switchView('datasheet');
+
+            // --- Info Panel Updater ---
+            function updateInfo(title, desc) {
+                if (!title) return;
+
+                // Simple debounce/check to avoid flicker if same info
+                if (infoTitle.textContent === title && infoDesc.innerHTML === desc) return;
+
+                infoTitle.classList.remove('fade-in');
+                infoDesc.classList.remove('fade-in');
+                void infoTitle.offsetWidth; // Trigger reflow
+                infoTitle.textContent = title;
+                infoDesc.innerHTML = desc;
+                infoTitle.classList.add('fade-in');
+                infoDesc.classList.add('fade-in');
+            }
+
+            // Hover delegation for new toolbar items
+            document.body.addEventListener('mouseover', (e) => {
+                const target = e.target.closest('.interactive-hover');
+                if (target && target.dataset.info) {
+                    // map "View" buttons to generic info or use the data-info
+                    updateInfo(target.innerText.split('\n')[0] || "Info", target.dataset.info);
+                }
+            });
+
+            // --- Datasheet Interactions ---
+            const dsTable = document.getElementById('ds-table');
+
+            dsTable.addEventListener('mouseover', (e) => {
+                const target = e.target;
+
+                // Clear previous highlights
+                document.querySelectorAll('.hover-col').forEach(el => el.classList.remove('hover-col'));
+                document.querySelectorAll('.hover-row').forEach(el => el.classList.remove('hover-row'));
+                document.querySelectorAll('.hover-cell').forEach(el => el.classList.remove('hover-cell'));
+                document.querySelectorAll('.hover-header-highlight').forEach(el => el.classList.remove('hover-header-highlight'));
+
+
+                // Case 1: Hover Column Header (Field)
+                if (target.classList.contains('col-header')) {
+                    const colIndex = target.dataset.col;
+                    const colName = target.textContent;
+                    target.classList.add('hover-header-highlight');
+                    document.querySelectorAll(`.ds-cell[data-col="${colIndex}"]`).forEach(cell => {
+                        cell.classList.add('hover-col');
+                    });
+                    updateInfo('Field (Kolom): ' + colName, 'Kategori atau atribut spesifik dari sebuah data. Contoh: Kolom "Nama", "Alamat", atau "Nomor Telepon".');
+                }
+
+                // Case 2: Hover Row Header (Record)
+                if (target.classList.contains('row-header') && target.parentElement.tagName === 'TR' && target.parentElement.dataset.row) {
+                    const rowId = target.parentElement.dataset.row;
+                    const rowName = target.textContent;
+                    target.classList.add('hover-header-highlight');
+                    target.parentElement.querySelectorAll('td').forEach(td => td.classList.add('hover-row'));
+                    updateInfo('Record (Baris): ' + rowName, 'Satu kesatuan data utuh yang saling terkait. Contoh: Satu baris horizontal berisi data lengkap milik satu orang siswa.');
+                }
+
+                // Case 3: Hover Cell (Intersection)
+                if (target.classList.contains('ds-cell')) {
+                    target.classList.add('hover-cell');
+                    const colIdx = target.dataset.col;
+                    const rowIdx = target.parentElement.dataset.row;
+                    updateInfo('Cell (Sel Data)', 'Titik temu antara Field dan Record. Tempat di mana satu nilai data tunggal disimpan.');
+                }
+            });
+
+            // --- Design View Interactions (Properties Tab) ---
+            const pTabs = document.querySelectorAll('.prop-tab-sm');
+            const pGeneral = document.getElementById('props-general');
+            const pLookup = document.getElementById('props-lookup');
+
+            pTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    pTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    // Toggle visibility
+                    if (tab.dataset.ptab === 'general') {
+                        pGeneral.style.setProperty('display', 'block', 'important');
+                        pLookup.style.setProperty('display', 'none', 'important');
+                    } else {
+                        pGeneral.style.setProperty('display', 'none', 'important');
+                        pLookup.style.setProperty('display', 'block', 'important');
+                    }
+                });
+            });
+
+            // Hover Field Rows
+            document.querySelectorAll('.design-row').forEach(row => {
+                row.addEventListener('mouseover', () => {
+                    document.querySelectorAll('.design-row').forEach(r => r.style.backgroundColor = '');
+                    row.style.backgroundColor = '#e0ecff';
+
+                    const fname = row.dataset.field;
+                    const ftype = row.dataset.type;
+
+                    const dataTypesExplanations = {
+                        'Short Text': 'Teks pendek (huruf/angka) dengan maksimal 255 karakter. Sangat cocok untuk Nama atau Nomor Telepon karena tidak digunakan untuk perhitungan matematis.',
+                        'Long Text': 'Digunakan untuk teks panjang atau catatan detail. Kapasitas penyimpanannya sangat besar, hingga 1 GB.',
+                        'Number': 'Menyimpan angka yang akan digunakan untuk perhitungan matematis.',
+                        'Large Number': 'Menyimpan angka bulat (integer) yang bernilai sangat besar.',
+                        'Date/Time': 'Tipe data khusus untuk menyimpan informasi tanggal dan waktu secara akurat.',
+                        'Date/Time Extended': 'Tipe data khusus untuk menyimpan informasi tanggal dan waktu secara akurat.',
+                        'Currency': 'Format angka untuk mata uang (seperti Rp atau $). Tipe ini menjaga standar 2 desimal agar perhitungan keuangan tetap akurat.',
+                        'Autonumber': 'Angka urut yang dihasilkan secara otomatis oleh sistem dan tidak bisa diisi manual. Sering digunakan sebagai Primary Key.',
+                        'Yes/No': 'Data logika yang hanya memiliki dua pilihan, seperti Ya/Tidak atau Benar/Salah. Biasanya tampil sebagai checkbox.',
+                        'OLE Object': 'Digunakan untuk menyematkan objek dari aplikasi eksternal, seperti dokumen Word atau spreadsheet Excel.',
+                        'Hyperlink': 'Menyimpan tautan (link) yang bisa diklik menuju alamat website/URL atau file tertentu.',
+                        'Attachment': 'Memungkinkan kamu menyimpan file lampiran secara langsung di dalam database, seperti foto atau dokumen.',
+                        'Calculated': 'Field yang nilainya dihasilkan secara otomatis dari perhitungan matematika field lainnya. Contoh: [Harga] * [Jumlah].',
+                        'Lookup Wizard...': 'Alat bantu untuk membuat relasi manual atau membuat daftar pilihan (dropdown) dari tabel lain.'
+                    };
+
+                    const explanation = dataTypesExplanations[ftype] || `Deskripsi untuk tipe data ${ftype} belum tersedia.`;
+                    updateInfo('Field: ' + fname, `<strong>Data Type: ${ftype}</strong><br><br>${explanation}`);
+                });
+            });
+
+            document.querySelector('.design-table-container').addEventListener('mouseleave', () => {
+                document.querySelectorAll('.design-row').forEach(r => r.style.backgroundColor = '');
+            });
+
+            // Hover Properties
+            document.querySelectorAll('.prop-list-item').forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    const propName = item.dataset.prop;
+                    const explanations = {
+                        'Field Size': 'Membatasi jumlah karakter maksimum yang bisa diinput. Contoh: Di-set 10 agar ukuran database tidak boros memori.',
+                        'New Values': 'Menentukan bagaimana nilai untuk tipe data AutoNumber dihasilkan saat record baru ditambahkan. Pilihannya adalah Increment (berurutan 1, 2, 3) atau Random (angka acak).',
+                        'Format': 'Mengatur tampilan visual data di layar tanpa mengubah data aslinya. Contoh: Long Date membuat tanggal tampil sebagai "Thursday, November 12, 2015".',
+                        'Decimal Places': 'Menentukan jumlah angka di belakang koma (desimal) yang ingin ditampilkan. Sangat berguna untuk merapikan tampilan tipe data Number atau Currency.',
+                        'Input Mask': 'Pola panduan yang memaksa user mengetik dalam format seragam. Contoh: LL-001 memaksa input berupa 2 huruf yang diikuti 3 angka.',
+                        'Caption': 'Nama alias untuk sebuah field agar terlihat lebih rapi di Form atau Report. Contoh: Field Tgl_Lhr diberi caption "Tanggal Lahir".',
+                        'Default Value': 'Nilai otomatis yang akan langsung terisi jika user membiarkan kolom tersebut kosong.',
+                        'Validation Rule': 'Aturan atau syarat logika agar data yang dimasukkan dianggap sah. Contoh: >=0 and <100 memastikan nilai yang diinput hanya dari 0 hingga 100.',
+                        'Validation Text': 'Pesan peringatan (error) kustom yang akan muncul jika user melanggar aturan dari Validation Rule.',
+                        'Required': 'Menentukan apakah field ini wajib diisi (Yes) atau boleh dibiarkan kosong (No).',
+                        'Allow Zero Length': 'Jika diatur ke Yes, sistem mengizinkan input berupa teks kosong ("") yang berbeda dengan status Null (tidak ada data sama sekali).',
+                        'Indexed': 'Membuat indeks internal untuk mempercepat proses pencarian data. Namun, penggunaan indeks yang terlalu banyak bisa memperlambat proses update data.',
+                        'Unicode Compression': 'Jika diaktifkan (Yes), sistem akan memampatkan teks yang diketik agar ukuran file database tidak membengkak. Sangat dianjurkan untuk Short Text dan Long Text.',
+                        'IME Mode': 'Mengontrol status aktifnya Input Method Editor (IME). Biasanya digunakan jika kamu membuat database yang membutuhkan input karakter bahasa Asia Timur (seperti Jepang atau Korea).',
+                        'IME Sentence Mode': 'Mengatur fase konversi kalimat khusus untuk penggunaan Input Method Editor (IME) bahasa Asia Timur. Biasanya dibiarkan secara default jika menggunakan huruf Latin.',
+                        'Text Format': 'Menentukan apakah teks di dalam kolom (biasanya Long Text) hanya berupa teks biasa (Plain Text) atau bisa diformat seperti di Word (Rich Text, di mana teks bisa di-bold, miring, atau diwarnai).',
+                        'Text Align': 'Mengatur perataan visual teks di dalam cell atau form. Pilihannya sama seperti di Word: General, Left (kiri), Center (tengah), Right (kanan), atau Distribute.',
+                        'Append Only': 'Fitur khusus untuk Long Text. Jika diatur ke Yes, Access akan menyimpan riwayat (log) semua teks yang pernah dimasukkan tanpa menghapus teks lamanya.',
+                        'Show Date Picker': 'Menentukan apakah ikon kalender kecil (Date Picker) akan otomatis muncul saat user mengklik kolom bertipe Date/Time, sehingga user bisa memilih tanggal tanpa harus mengetik manual.',
+                        'Display Control': 'Menentukan bentuk antarmuka input data. Bisa berupa Text Box biasa, List Box yang selalu terbuka, atau Combo Box bergaya dropdown.',
+                        'Row Source Type': 'Menentukan dari mana asal pilihan data. Bisa diambil dari tabel/query lain, atau Value List (diketik manual).',
+                        'Row Source': 'Berisi perintah sumber datanya. Bisa berupa perintah SQL (contoh: SELECT ID, Nama FROM Pelanggan) atau teks manual.',
+                        'Bound Column': 'Menentukan kolom ke-berapa dari dropdown yang nilainya benar-benar akan disimpan secara permanen ke dalam database.',
+                        'Column Count': 'Mengatur berapa banyak kolom yang muncul di dropdown dan seberapa lebarnya. Kamu bisa mengatur lebar 0cm untuk menyembunyikan kolom ID.',
+                        'Column Heads': 'Menampilkan judul kolom di baris paling atas pada daftar pilihan (dropdown). Sangat berguna jika dropdown kamu memiliki lebih dari satu kolom agar user tahu persis arti dari setiap data yang ditampilkan.',
+                        'Column Widths': 'Mengatur berapa banyak kolom yang muncul di dropdown dan seberapa lebarnya. Kamu bisa mengatur lebar 0cm untuk menyembunyikan kolom ID.',
+                        'List Rows': 'Menentukan jumlah maksimal baris data yang tampil saat dropdown dibuka, agar daftar pilihan tidak memanjang terlalu jauh ke bawah dan tetap rapi di layar.',
+                        'List Width': 'Mengatur lebar total kotak dropdown secara keseluruhan saat diklik atau dibuka oleh user.',
+                        'Limit To List': 'Jika diatur ke Yes, user wajib memilih data yang ada di daftar dan tidak boleh mengetik nilai baru secara manual.'
+                    };
+                    const explanation = explanations[propName] || `Deskripsi untuk ${propName} belum tersedia.`;
+                    updateInfo(propName, explanation);
+                });
+            });
+
+            // Initial view
+            switchView('datasheet');
+        });
+    </script>
+</body>
+
+</html>

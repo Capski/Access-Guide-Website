@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports | MS Access Guide</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/simulation.css">
+    <style>
+        /* Reports Page Specific Styles */
+        .workspace {
+            position: relative;
+            height: 600px;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        .workspace-view {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            flex-direction: column;
+        }
+
+        .workspace-view.active {
+            display: flex;
+        }
+
+        /* Report View Specifics */
+        .report-canvas {
+            background-color: #fff;
+            margin: 20px auto;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ccc;
+            height: calc(100% - 40px);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 80%;
+            /* A4ish proportion */
+            overflow-y: auto;
+        }
+
+        .report-title-header {
+            background-color: #d0dafd;
+            /* Light blue from screenshot */
+            padding: 15px 20px;
+            color: #333;
+            font-weight: bold;
+            font-family: 'Segoe UI', serif;
+            font-size: 20px;
+            border-bottom: 2px solid white;
+        }
+
+        .report-content-body {
+            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 13px;
+        }
+
+        .report-col-header {
+            color: #777;
+            font-size: 11px;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 2px;
+        }
+
+        .report-row {
+            padding: 8px 10px;
+            border-bottom: 1px solid #f0f0f0;
+            /* Very subtle */
+        }
+
+        .report-row:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .report-page-footer {
+            margin-top: auto;
+            padding: 10px 20px;
+            font-size: 11px;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Print View Specifics */
+        .print-preview-container {
+            background-color: #555;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .print-page {
+            background: white;
+            width: 400px;
+            /* Enlarged width */
+            height: 540px;
+            /* Enlarged height to fit workspace */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            font-size: 11px;
+            /* Readable text */
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Design View Specifics */
+        .design-canvas {
+            background-color: #f0f0f0;
+            height: 100%;
+            position: relative;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .design-band {
+            border: 1px solid #ccc;
+            background: #e0e0e0;
+            margin-bottom: 0;
+            font-size: 11px;
+            padding: 2px 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .design-area {
+            background-color: #fff;
+            background-image:
+                linear-gradient(#e0e0e0 1px, transparent 1px),
+                linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-left: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+            min-height: 40px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .design-control {
+            position: absolute;
+            border: 1px solid #999;
+            background: white;
+            padding: 2px;
+            font-size: 11px;
+            cursor: help;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .design-control:hover {
+            outline: 1px solid var(--access-red);
+            background: #fff5f5;
+        }
+
+        /* Toolbar Icons Override */
+        .tool-icon-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 10px;
+            border: 1px solid transparent;
+            cursor: default;
+            border-radius: 3px;
+            min-width: 60px;
+        }
+
+        .clickable-tool {
+            cursor: pointer;
+            background-color: #fff;
+        }
+
+        .clickable-tool:hover {
+            background-color: #ffe6e6;
+            border-color: var(--access-red);
+        }
+
+        .tool-icon-box:not(.clickable-tool):hover {
+            background-color: #e0e0e0;
+        }
+
+        .tool-text {
+            font-size: 11px;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        /* Wizard Popup Styles */
+        .wizard-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            background: #f0f0f0;
+            border: 1px solid #666;
+            box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 12px;
+        }
+
+        .wizard-header {
+            background: linear-gradient(#fff, #e0e0e0);
+            padding: 6px 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #999;
+        }
+
+        .wizard-body {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #f0f0f0;
+        }
+
+        .wizard-content-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .wizard-list {
+            border: 1px solid #999;
+            background: white;
+            height: 120px;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .wizard-list-item {
+            padding: 2px 5px;
+            cursor: default;
+        }
+
+        .wizard-list-item:hover,
+        .wizard-list-item.selected {
+            background-color: #000;
+            color: white;
+        }
+
+        .wizard-footer {
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .wizard-btn {
+            min-width: 70px;
+            padding: 4px 10px;
+            border: 1px solid #999;
+            background: #e0e0e0;
+            cursor: pointer;
+        }
+
+        .wizard-btn:hover {
+            border-color: #333;
+            background: #d0d0d0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Info Panel Updates */
+        .info-panel {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container navbar">
+            <div class="nav-logo">Access Guide</div>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tables.html">Tables</a></li>
+                <li><a href="relationships.html">Relationships</a></li>
+                <li><a href="queries.html">Queries</a></li>
+                <li><a href="forms.html">Forms</a></li>
+                <li><a href="reports.html" class="active">Reports</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="container main-layout">
+
+        <!-- Left: Simulation -->
+        <div class="simulation-container">
+            <!-- Tabs -->
+            <div class="access-tabs">
+                <span class="access-tab active interactive-hover" data-view="report-view" data-title="Report View"
+                    data-info="Tampilan cepat untuk melihat data asli yang sudah diformat sebagai laporan di layar komputermu.">Report
+                    View</span>
+                <span class="access-tab interactive-hover" data-view="print-view" data-title="Print Preview"
+                    data-info="Tampilan pratinjau cetak. Memperlihatkan secara pasti bagaimana laporan akan terlihat dengan margin dan tata letak fisik saat dicetak di atas kertas.">Print
+                    View</span>
+                <span class="access-tab interactive-hover" data-view="design-view" data-title="Design View"
+                    data-info="Tampilan untuk mengedit struktur laporan (header, footer, kolom, dan tata letak data) secara bebas.">Design
+                    View</span>
+            </div>
+
+            <!-- Toolbar (Dynamic) -->
+            <div class="access-toolbar" id="toolbar">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Workspace -->
+            <div class="workspace">
+
+                <!-- View 1: Report View -->
+                <div id="report-view" class="workspace-view active">
+                    <div class="report-canvas interactive-hover" data-title="Printed Page"
+                        data-info="Menyimulasikan tampilan fisik kertas. Report adalah hasil akhir data (Output resmi) yang siap dicetak menjadi dokumen (Hardcopy) atau diekspor menjadi file PDF.">
+                        <div class="report-title-header interactive-hover" data-title="Report Header"
+                            data-info="Bagian paling atas dari laporan. Hanya dicetak satu kali di halaman pertama. Biasanya berisi judul utama atau logo perusahaan.">
+                            Tabel Buku1</div>
+
+                        <div class="report-content-body">
+                            <div class="report-col-header interactive-hover" data-title="Page Header"
+                                data-info="Bagian yang dicetak berulang di bagian paling atas pada setiap halaman kertas. Sangat berguna untuk meletakkan teks judul kolom agar tabel mudah dibaca di setiap halaman.">
+                                Judul Buku</div>
+
+                            <div class="report-row interactive-hover" data-title="Detail Section"
+                                data-info="Bagian inti laporan. Area ini akan terus berulang (repeats) ke bawah untuk menampilkan setiap baris data (record) dari sumber tabel atau query.">
+                                Make It Stick</div>
+                            <div class="report-row interactive-hover" data-title="Detail Section"
+                                data-info="Bagian inti laporan. Area ini akan terus berulang (repeats) ke bawah untuk menampilkan setiap baris data (record) dari sumber tabel atau query.">
+                                Surrounded by Idiots
+                            </div>
+                            <div class="report-row interactive-hover" data-title="Detail Section"
+                                data-info="Bagian inti laporan. Area ini akan terus berulang (repeats) ke bawah untuk menampilkan setiap baris data (record) dari sumber tabel atau query.">
+                                White Nights</div>
+                            <div class="report-row interactive-hover" data-title="Detail Section"
+                                data-info="Bagian inti laporan. Area ini akan terus berulang (repeats) ke bawah untuk menampilkan setiap baris data (record) dari sumber tabel atau query.">
+                                Harry Potter</div>
+                            <div class="report-row interactive-hover" data-title="Detail Section"
+                                data-info="Bagian inti laporan. Area ini akan terus berulang (repeats) ke bawah untuk menampilkan setiap baris data (record) dari sumber tabel atau query.">
+                                The Brothers
+                                Karamazov</div>
+                            <div class="report-row interactive-hover" data-title="Detail Section"
+                                data-info="Bagian inti laporan. Area ini akan terus berulang (repeats) ke bawah untuk menampilkan setiap baris data (record) dari sumber tabel atau query.">
+                                The Gambler</div>
+                            <div class="report-row interactive-hover" data-title="Detail Section"
+                                data-info="Bagian inti laporan. Area ini akan terus berulang (repeats) ke bawah untuk menampilkan setiap baris data (record) dari sumber tabel atau query.">
+                                48 Laws of Power
+                            </div>
+                        </div>
+
+                        <div class="report-page-footer interactive-hover" data-title="Page Footer"
+                            data-info="Dicetak berulang di bagian paling bawah pada setiap halaman. Paling sering digunakan untuk meletakkan nomor halaman atau tanggal cetak.">
+                            <span>Thursday, February 19, 2026</span>
+                            <span>Page 1 of 1</span>
+                        </div>
+                    </div>
+
+                    <!-- Report Wizard Popup -->
+                    <div id="report-wizard-popup" class="wizard-popup hidden">
+                        <div class="wizard-header">
+                            <span>Report Wizard</span>
+                            <span style="cursor:pointer" onclick="togglePopup('report-wizard-popup')">X</span>
+                        </div>
+                        <div class="wizard-body">
+                            <div
+                                style="display:flex; gap:10px; align-items:center; background:#ffcb05; padding:8px; border:1px solid #e0b000;">
+                                <div><i data-lucide="wand-2" size="32"></i></div>
+                                <div>Which fields do you want on your report?<br>You can choose from more than one table
+                                    or query.</div>
+                            </div>
+                            <div>
+                                <label
+                                    style="font-weight:bold; display:block; margin-bottom:2px;">Tables/Queries</label>
+                                <select style="width:200px; padding:2px;">
+                                    <option>Table: Tabel Buku</option>
+                                </select>
+                            </div>
+                            <div class="wizard-content-row">
+                                <div style="flex:1">
+                                    <div style="font-weight:bold; margin-bottom:2px;">Available Fields:</div>
+                                    <div class="wizard-list">
+                                        <div class="wizard-list-item selected">Kode Buku</div>
+                                        <div class="wizard-list-item">Judul Buku</div>
+                                        <div class="wizard-list-item">Penulis</div>
+                                        <div class="wizard-list-item">Penerbit</div>
+                                        <div class="wizard-list-item">Tahun Terbit</div>
+                                        <div class="wizard-list-item">Kategori</div>
+                                        <div class="wizard-list-item">Status</div>
+                                        <div class="wizard-list-item">Tanggal Masuk</div>
+                                    </div>
+                                </div>
+                                <div
+                                    style="display:flex; flex-direction:column; justify-content:center; gap:5px; padding:0 5px;">
+                                    <button class="wizard-btn">&gt;</button>
+                                    <button class="wizard-btn">&gt;&gt;</button>
+                                    <button class="wizard-btn">&lt;</button>
+                                    <button class="wizard-btn">&lt;&lt;</button>
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:bold; margin-bottom:2px;">Selected Fields:</div>
+                                    <div class="wizard-list">
+                                        <!-- Empty as per screenshot -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="wizard-footer">
+                            <button class="wizard-btn" onclick="togglePopup('report-wizard-popup')">Cancel</button>
+                            <button class="wizard-btn">&lt; Back</button>
+                            <button class="wizard-btn">Next &gt;</button>
+                            <button class="wizard-btn">Finish</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- View 2: Print View -->
+                <div id="print-view" class="workspace-view">
+                    <div class="print-preview-container">
+                        <div class="print-page interactive-hover" data-title="Printed Page"
+                            data-info="Menyimulasikan tampilan fisik kertas. Report adalah hasil akhir data (Output resmi) yang siap dicetak menjadi dokumen (Hardcopy) atau diekspor menjadi file PDF.">
+                            <!-- Miniature Content -->
+                            <div style="background:#d0dafd; height:30px; width:100%; margin-bottom:20px;"></div>
+                            <div style="border-bottom:1px solid #ccc; margin-bottom:10px; font-weight:bold;">Judul Buku
+                            </div>
+                            <div style="margin-bottom:6px;">Make It Stick</div>
+                            <div style="margin-bottom:6px;">Surrounded by Idiots</div>
+                            <div style="margin-bottom:6px;">White Nights</div>
+                            <div style="margin-bottom:6px;">Harry Potter</div>
+                            <div style="margin-bottom:6px;">The Brothers Karamazov</div>
+                            <div style="margin-bottom:6px;">The Gambler</div>
+                            <div style="margin-bottom:6px;">48 Laws of Power</div>
+
+                            <div
+                                style="margin-top:auto; font-size:10px; display:flex; justify-content:space-between; border-top:1px solid #eee; padding-top:5px;">
+                                <span>19/02/2026</span>
+                                <span>1</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View 3: Design View -->
+                <div id="design-view" class="workspace-view">
+                    <div class="design-canvas">
+
+                        <div class="design-band interactive-hover" data-title="Report Header"
+                            data-info="Bagian paling atas dari laporan. Hanya dicetak satu kali di halaman pertama. Biasanya berisi judul utama atau logo perusahaan.">
+                            Report
+                            Header</div>
+                        <div class="design-area" style="height: 80px;">
+                            <div class="design-control interactive-hover"
+                                style="top:20px; left:20px; width:250px; height:40px; border:none; background:transparent; font-size:24px; font-weight:normal; border:1px dotted #999; display:flex; padding-left:5px;"
+                                data-title="Title Label"
+                                data-info="Menambahkan teks statis sebagai judul utama laporan.">
+                                Report Header
+                            </div>
+                        </div>
+
+                        <div class="design-band interactive-hover" data-title="Page Header"
+                            data-info="Bagian yang dicetak berulang di bagian paling atas pada setiap halaman kertas. Sangat berguna untuk meletakkan teks judul kolom agar tabel mudah dibaca di setiap halaman.">
+                            Page
+                            Header</div>
+                        <div class="design-area" style="height: 40px;">
+                            <div class="design-control interactive-hover"
+                                style="top:10px; left:20px; width:120px; height:20px; border:none; background:transparent; font-weight:bold;"
+                                data-title="Label Control"
+                                data-info="Menambahkan teks statis, biasanya digunakan sebagai judul kolom (Column Heading) di bagian Page Header.">
+                                Page Header
+                            </div>
+                        </div>
+
+                        <div class="design-band interactive-hover" data-title="Detail Section"
+                            data-info="Bagian inti laporan. Area ini akan terus berulang (repeats) ke bawah untuk menampilkan setiap baris data (record) dari sumber tabel atau query.">
+                            Detail</div>
+                        <div class="design-area" style="height: 60px;">
+                            <div class="design-control interactive-hover"
+                                style="top:15px; left:20px; width:100px; height:22px; background:transparent; border:none; text-align:right; border:1px dotted #ccc;"
+                                data-title="Label Control"
+                                data-info="Menambahkan teks statis, biasanya digunakan sebagai judul kolom (Column Heading) di bagian Page Header.">
+                                Field Name
+                            </div>
+                            <div class="design-control interactive-hover"
+                                style="top:15px; left:130px; width:200px; height:22px; font-weight:bold; text-align:center;"
+                                data-title="Text Box Control"
+                                data-info="Menambahkan field (kotak) yang terhubung ke tabel/query untuk menampilkan baris data secara dinamis.">
+                                Data
+                            </div>
+                        </div>
+
+                        <div class="design-band interactive-hover" data-title="Page Footer"
+                            data-info="Dicetak berulang di bagian paling bawah pada setiap halaman. Paling sering digunakan untuk meletakkan nomor halaman atau tanggal cetak.">
+                            Page Footer</div>
+                        <div class="design-area" style="height: 60px;">
+                            <div class="design-control interactive-hover"
+                                style="top:20px; left:20px; width:120px; height:22px; border:1px dotted #999;"
+                                data-title="Date/Time Function"
+                                data-info="Rumus otomatis di Access untuk menampilkan tanggal dan waktu saat ini (saat laporan dicetak atau dibuka).">
+                                Date and Time
+                            </div>
+                            <div class="design-control interactive-hover"
+                                style="top:20px; right:20px; width:100px; height:22px; border:1px dotted #999;"
+                                data-title="Page Function"
+                                data-info="Rumus otomatis untuk menampilkan nomor halaman saat ini secara berurutan.">
+                                Page Number
+                            </div>
+                        </div>
+
+                        <div class="design-band interactive-hover" data-title="Report Footer"
+                            data-info="Bagian paling akhir dari laporan dan hanya dicetak satu kali di halaman terakhir. Sering digunakan untuk fitur Calculations (Kalkulasi), seperti menambahkan Grand Total atau Subtotal menggunakan rumus `=Sum([Total])`.">
+                            Report Footer</div>
+                        <div class="design-area" style="height: 25px; background:#e0e0e0;">
+                            <!-- Empty by default often -->
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Right: Info Panel -->
+        <aside class="info-panel">
+            <div class="info-content">
+                <h2 id="info-title" class="fade-in">Reports (Laporan)</h2>
+                <p id="info-desc" class="fade-in">
+                    Report adalah hasil akhir data yang berfungsi sebagai Output resmi dan siap dicetak (Hardcopy) atau
+                    diekspor (PDF). Sumber datanya bisa diambil langsung dari Tabel atau dari Query jika butuh data yang
+                    sudah diolah/difilter. Di sini kamu bisa menggunakan fitur Grouping & Sorting untuk mengelompokkan
+                    data (misal: Laporan Penjualan per Bulan).
+                </p>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="nav-logo" style="color: white; margin-bottom: 1rem;">Access Guide</div>
+                <p>Panduan interaktif untuk mempelajari Microsoft Access dengan mudah.</p>
+            </div>
+
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Overview</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="tables.html">Tables</a></li>
+                        <li><a href="relationships.html">Relationships</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Advanced</h4>
+                    <ul>
+                        <li><a href="queries.html">Queries</a></li>
+                        <li><a href="forms.html">Forms</a></li>
+                        <li><a href="reports.html">Reports</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>&copy; 2026 Access Guide Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/global.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // --- Report Logic ---
+
+        const toolbar = document.getElementById('toolbar');
+        const reportViewTab = document.querySelector('.access-tab[data-view="report-view"]');
+        const printViewTab = document.querySelector('.access-tab[data-view="print-view"]');
+        const designViewTab = document.querySelector('.access-tab[data-view="design-view"]');
+        const tabs = document.querySelectorAll('.access-tab');
+        const views = document.querySelectorAll('.workspace-view');
+
+        const infoTitle = document.getElementById('info-title');
+        const infoDesc = document.getElementById('info-desc');
+
+        // Tool Data
+        const reportTools = [
+            { icon: 'bar-chart-2', title: 'Report (Laporan Standar)', text: 'Report', info: 'Membuat laporan sederhana secara instan yang menampilkan semua data dari tabel yang dipilih.', clickable: false },
+            { icon: 'pencil-ruler', title: 'Report Design', text: 'Report Design', info: 'Membuat laporan kosong baru langsung di Design View untuk memberikan kontrol tata letak penuh dari nol kepada desainer.', clickable: false },
+            { icon: 'file', title: 'Blank Report', text: 'Blank Report', info: 'Membuat laporan kosong di Layout View, memungkinkanmu menambahkan kolom satu per satu sambil langsung melihat datanya.', clickable: false },
+            { icon: 'wand-2', title: 'Report Wizard', text: 'Report Wizard', info: 'Panduan otomatis langkah-demi-langkah untuk membuat laporan. Sangat berguna untuk mengelompokkan data (Grouping & Sorting) dengan mudah.', clickable: true, id: 'btn-report-wizard' }
+        ];
+
+        const printTools = [
+            { icon: 'printer', title: 'Print', text: 'Print', info: 'Mengirim laporan langsung ke mesin printer untuk dicetak (Hardcopy).', clickable: false },
+            { icon: 'maximize', title: 'Paper Size', text: 'Size', info: 'Memilih ukuran kertas fisik yang akan digunakan (misalnya: A4, Letter, atau Legal).', clickable: false },
+            { icon: 'move', title: 'Margins', text: 'Margins', info: 'Mengatur jarak batas tepi halaman kertas (margin atas, bawah, kiri, dan kanan) agar cetakan terlihat rapi.', clickable: false },
+            { icon: 'file', title: 'Portrait Orientation', text: 'Portrait', info: 'Mengatur orientasi kertas menjadi vertikal (memanjang ke atas). Cocok untuk laporan standar.', clickable: false },
+            { icon: 'file-spreadsheet', title: 'Landscape Orientation', text: 'Landscape', info: 'Mengatur orientasi kertas menjadi horizontal (mendatar). Sangat cocok jika tabel datamu memiliki banyak kolom yang lebar.', clickable: false }
+        ];
+
+        const designTools = [
+            { icon: 'hash', title: 'Page Numbers', text: 'Page Numbers', info: 'Menyisipkan nomor halaman otomatis, biasanya diletakkan di bagian Page Footer.', clickable: false },
+            { icon: 'image', title: 'Logo', text: 'Logo', info: 'Menambahkan gambar atau logo instansi ke bagian Report Header.', clickable: false },
+            { icon: 'type', title: 'Title Label', text: 'Title', info: 'Menambahkan teks statis sebagai judul utama laporan.', clickable: false },
+            { icon: 'calendar-clock', title: 'Date and Time', text: 'Date and Time', info: 'Menyisipkan format tanggal dan waktu saat ini secara otomatis ke dalam laporan.', clickable: false },
+            { icon: 'box-select', title: 'Text Box Control', text: 'Text Box', info: 'Menambahkan field (kotak) yang terhubung ke tabel/query untuk menampilkan baris data secara dinamis.', clickable: false },
+            { icon: 'type', title: 'Label Control', text: 'Label', info: 'Menambahkan teks statis, biasanya digunakan sebagai judul kolom (Column Heading) di bagian Page Header.', clickable: false }
+        ];
+
+        function renderToolbar(tools) {
+            toolbar.innerHTML = '';
+            tools.forEach(tool => {
+                const el = document.createElement('div');
+                el.className = 'tool-icon-box interactive-hover';
+                if (tool.clickable) el.classList.add('clickable-tool');
+                el.dataset.title = tool.title || tool.text;
+                el.dataset.info = tool.info;
+                el.innerHTML = `<i data-lucide="${tool.icon}" width="24" height="24"></i><span class="tool-text" style="max-width: 60px; word-wrap: break-word; line-height: 1.1;">${tool.text}</span>`;
+
+                if (tool.id) {
+                    el.id = tool.id;
+                    el.onclick = () => {
+                        if (tool.id === 'btn-report-wizard') togglePopup('report-wizard-popup');
+                    };
+                }
+
+                toolbar.appendChild(el);
+            });
+            lucide.createIcons();
+            attachHoverListeners();
+        }
+
+        function switchView(viewName) {
+            tabs.forEach(t => t.classList.remove('active'));
+            views.forEach(v => v.classList.remove('active'));
+
+            // Hide popups
+            document.querySelectorAll('.wizard-popup').forEach(p => p.classList.add('hidden'));
+
+            if (viewName === 'report-view') {
+                reportViewTab.classList.add('active');
+                document.getElementById('report-view').classList.add('active');
+                renderToolbar(reportTools);
+            } else if (viewName === 'print-view') {
+                printViewTab.classList.add('active');
+                document.getElementById('print-view').classList.add('active');
+                renderToolbar(printTools);
+            } else {
+                designViewTab.classList.add('active');
+                document.getElementById('design-view').classList.add('active');
+                renderToolbar(designTools);
+            }
+        }
+
+        function togglePopup(id) {
+            const popup = document.getElementById(id);
+            if (popup.classList.contains('hidden')) {
+                popup.classList.remove('hidden');
+            } else {
+                popup.classList.add('hidden');
+            }
+        }
+
+        function updateInfo(title, desc) {
+            if (!title) return;
+            infoTitle.innerText = title;
+            infoDesc.innerText = desc;
+
+            infoTitle.classList.remove('fade-in');
+            infoDesc.classList.remove('fade-in');
+            void infoTitle.offsetWidth;
+            infoTitle.classList.add('fade-in');
+            infoDesc.classList.add('fade-in');
+        }
+
+        function attachHoverListeners() {
+            // Handled via delegation below
+        }
+
+        // Event Delegation for Hovers
+        document.body.addEventListener('mouseover', (e) => {
+            const target = e.target.closest('.interactive-hover');
+            if (target && target.dataset.info) {
+                if (infoDesc.innerText !== target.dataset.info) {
+                    updateInfo(target.dataset.title || target.innerText.split('\n')[0] || "Info", target.dataset.info);
+                }
+            }
+        });
+
+        // Init
+        reportViewTab.addEventListener('click', () => switchView('report-view'));
+        printViewTab.addEventListener('click', () => switchView('print-view'));
+        designViewTab.addEventListener('click', () => switchView('design-view'));
+
+        switchView('report-view'); // Default
+
+    </script>
+</body>
+
+</html>

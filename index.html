@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Microsoft Access</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- Global Navigation -->
+    <header>
+        <div class="container navbar">
+            <div class="nav-logo">Access Guide</div>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="tables.html">Tables</a></li>
+                <li><a href="relationships.html">Relationships</a></li>
+                <li><a href="queries.html">Queries</a></li>
+                <li><a href="forms.html">Forms</a></li>
+                <li><a href="reports.html">Reports</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- Hero Section -->
+        <section class="container hero-section">
+            <div class="hero-text">
+                <h1>Panduan<br>Microsoft Access</h1>
+                <p>Situs <em>all in one</em> untuk belajar Microsoft Access.</p>
+            </div>
+            <div class="hero-image">
+                <!-- User to replace this with actual image in assets/images/ -->
+                <img src="./assets/images/index image.png" alt="Microsoft Access Concept Illustration"
+                    onerror="this.src='https://placehold.co/500x300/EFEDE8/383838?text=Place+Image+Here'">
+            </div>
+        </section>
+
+        <!-- Darker Sections -->
+        <div class="section-alt">
+            <div class="container">
+
+                <!-- DBMS Section -->
+                <div class="content-block">
+                    <div class="icon">
+                        <i data-lucide="server" width="48" height="48"></i>
+                    </div>
+                    <h2>Database Management System</h2>
+                    <p>Software khusus yang digunakan untuk membuat, mengelola, memanipulasi, dan mengakses database
+                        secara efisien, terstruktur, dan aman.</p>
+                </div>
+
+                <!-- Access Section -->
+                <div class="content-block">
+                    <div class="icon">
+                        <i data-lucide="database" width="48" height="48"></i>
+                    </div>
+                    <h2>Microsoft Access</h2>
+                    <p>Microsoft Access adalah aplikasi database relasional yang memungkinkan pengguna untuk memasukkan,
+                        mengelola, dan memanipulasi data dalam jumlah besar secara efisien. Berbeda dengan Excel yang
+                        fokus pada kalkulasi angka, Access fokus pada pengelolaan informasi yang saling terhubung.</p>
+                </div>
+
+                <!-- Database Definition & Pills -->
+                <div class="content-block">
+                    <h2>Database</h2>
+                    <p>Database adalah sekumpulan data yang tersimpan dalam berbagai tabel yang saling berelasi.
+                        Struktur dasarnya terdiri dari:</p>
+
+                    <div class="pills-container">
+                        <div class="pill">Table</div>
+                        <div class="pill">Field</div>
+                        <div class="pill">Record</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Comparison Section (Moved out for Light Background) -->
+        <section class="container comparison-section">
+            <h2 class="text-center" style="margin-bottom: 2rem;">Access v.s. Spreadsheet</h2>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Access</th>
+                        <th>Spreadsheet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-label">Kunci Data</td>
+                        <td class="col-data">Memiliki <strong>Primary Key</strong> & <strong>Foreign Key</strong> untuk
+                            identifikasi unik.</td>
+                        <td class="col-data">Tidak ada sistem kunci (key) yang mengikat data.</td>
+                    </tr>
+                    <tr>
+                        <td class="col-label">Isi</td>
+                        <td class="col-data">Terdiri dari atribut dan data record.</td>
+                        <td class="col-data">Terdiri dari kolom dan baris bebas.</td>
+                    </tr>
+                    <tr>
+                        <td class="col-label">Ukuran</td>
+                        <td class="col-data">Kapasitas penyimpanan jauh lebih besar (relatif tidak terbatas).</td>
+                        <td class="col-data">Kapasitas terbatas pada jumlah baris per sheet.</td>
+                    </tr>
+                    <tr>
+                        <td class="col-label">Relasi</td>
+                        <td class="col-data">Relasi antar <strong>Tabel</strong> (menjaga konsistensi data).</td>
+                        <td class="col-data">Relasi antar <strong>Sheet</strong> (rawan error).</td>
+                    </tr>
+                    <tr>
+                        <td class="col-label">Validasi</td>
+                        <td class="col-data">Terdapat <strong>Validation Rules</strong> ketat saat input.</td>
+                        <td class="col-data">Tidak ada aturan validasi data yang ketat.</td>
+                    </tr>
+                    <tr>
+                        <td class="col-label">Output</td>
+                        <td class="col-data">Bisa menghasilkan <strong>Form</strong> dan <strong>Report</strong>
+                            profesional.</td>
+                        <td class="col-data">Input dan Output berada di tampilan yang sama (tabel).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="nav-logo" style="color: white; margin-bottom: 1rem;">Access Guide</div>
+                <p>Panduan interaktif untuk mempelajari Microsoft Access dengan mudah.</p>
+            </div>
+
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Overview</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="tables.html">Tables</a></li>
+                        <li><a href="relationships.html">Relationships</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Advanced</h4>
+                    <ul>
+                        <li><a href="queries.html">Queries</a></li>
+                        <li><a href="forms.html">Forms</a></li>
+                        <li><a href="reports.html">Reports</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>&copy; 2026 Access Guide Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/global.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

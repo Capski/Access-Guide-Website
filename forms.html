@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms | MS Access Guide</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/simulation.css">
+    <style>
+        /* Forms Page Specific Styles */
+        .workspace {
+            position: relative;
+            height: 600px;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        .workspace-view {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            flex-direction: column;
+        }
+
+        .workspace-view.active {
+            display: flex;
+        }
+
+        /* Form View Specifics */
+        .form-canvas {
+            background-color: #fff;
+            margin: 20px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ccc;
+            height: calc(100% - 40px);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mock-form-title {
+            background-color: var(--access-red);
+            /* Access color */
+            padding: 10px 15px;
+            color: white;
+            font-weight: bold;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+        }
+
+        .mock-form-content {
+            padding: 20px;
+            flex-grow: 1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 13px;
+        }
+
+        .mock-field-row {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .mock-field-label {
+            width: 100px;
+            text-align: right;
+            margin-right: 10px;
+            color: #444;
+            cursor: help;
+            border: 1px solid transparent;
+        }
+
+        .mock-field-label:hover {
+            border: 1px dashed #999;
+            background: #eee;
+        }
+
+        .mock-field-input {
+            width: 200px;
+            padding: 3px 5px;
+            border: 1px solid #999;
+            background: white;
+            cursor: help;
+        }
+
+        .mock-field-input:hover {
+            border: 1px solid blue;
+            background: #eef;
+        }
+
+        .mock-form-footer {
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 5px;
+            background: #fdfdfd;
+        }
+
+        .mock-btn {
+            padding: 4px 12px;
+            border: 1px solid #999;
+            background: #eee;
+            font-size: 12px;
+            cursor: help;
+            border-radius: 2px;
+        }
+
+        .mock-btn:hover {
+            background: #ddd;
+            border-color: #666;
+        }
+
+        /* Design View Specifics */
+        .design-canvas {
+            background-color: #f0f0f0;
+            /* Outer gray */
+            height: 100%;
+            position: relative;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .design-band {
+            border: 1px solid #ccc;
+            /* Lighter border */
+            background: #e0e0e0;
+            margin-bottom: 0;
+            font-size: 11px;
+            padding: 2px 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .design-area {
+            background-color: #fff;
+            background-image:
+                linear-gradient(#e0e0e0 1px, transparent 1px),
+                linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-left: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+            min-height: 80px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .design-control {
+            position: absolute;
+            border: 1px solid #999;
+            background: white;
+            padding: 4px;
+            font-size: 12px;
+            cursor: help;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .design-control:hover {
+            outline: 1px solid var(--access-red);
+            background: #fff5f5;
+        }
+
+        .design-label {
+            background: transparent;
+            border: none;
+            font-weight: bold;
+        }
+
+        /* Toolbar Icons Override */
+        .tool-icon-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 10px;
+            border: 1px solid transparent;
+            cursor: default;
+            /* Default no cursor */
+            border-radius: 3px;
+            min-width: 60px;
+        }
+
+        /* Specific clickable ones */
+        .clickable-tool {
+            cursor: pointer;
+            background-color: #fff;
+            /* Slight affordance */
+        }
+
+        .clickable-tool:hover {
+            background-color: #ffe6e6;
+            /* Light red hover */
+            border-color: var(--access-red);
+        }
+
+        .tool-icon-box:not(.clickable-tool):hover {
+            background-color: #e0e0e0;
+            /* Gray hover for non-clickable info items */
+        }
+
+        .tool-text {
+            font-size: 11px;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        /* Wizard Popup Styles */
+        .wizard-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            background: #f0f0f0;
+            border: 1px solid #666;
+            box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 12px;
+        }
+
+        .wizard-header {
+            background: linear-gradient(#fff, #e0e0e0);
+            padding: 6px 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #999;
+        }
+
+        .wizard-body {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #f0f0f0;
+        }
+
+        .wizard-content-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .wizard-list {
+            border: 1px solid #999;
+            background: white;
+            height: 120px;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .wizard-list-item {
+            padding: 2px 5px;
+            cursor: default;
+        }
+
+        .wizard-list-item:hover,
+        .wizard-list-item.selected {
+            background-color: #000;
+            color: white;
+        }
+
+        .wizard-footer {
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .wizard-btn {
+            min-width: 70px;
+            padding: 4px 10px;
+            border: 1px solid #999;
+            background: #e0e0e0;
+            cursor: pointer;
+        }
+
+        .wizard-btn:hover {
+            border-color: #333;
+            background: #d0d0d0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Info Panel Updates */
+        .info-panel {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container navbar">
+            <div class="nav-logo">Access Guide</div>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tables.html">Tables</a></li>
+                <li><a href="relationships.html">Relationships</a></li>
+                <li><a href="queries.html">Queries</a></li>
+                <li><a href="forms.html" class="active">Forms</a></li>
+                <li><a href="reports.html">Reports</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="container main-layout">
+
+        <!-- Left: Simulation -->
+        <div class="simulation-container">
+            <!-- Tabs (New Style) -->
+            <div class="access-tabs">
+                <span class="access-tab active interactive-hover" data-view="form-view" data-title="Form View"
+                    data-info="Tampilan utama untuk menggunakan form. Di sini, pengguna berinteraksi langsung dengan form untuk memasukkan, mengedit, atau melihat data.">Form
+                    View</span>
+                <span class="access-tab interactive-hover" data-view="design-view" data-title="Design View"
+                    data-info="Tampilan khusus bagi pengembang database untuk membangun dan memodifikasi struktur, warna, dan tata letak kontrol di dalam form.">Design
+                    View</span>
+            </div>
+
+            <!-- Toolbar (Dynamic) -->
+            <div class="access-toolbar" id="toolbar">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Workspace -->
+            <div class="workspace">
+
+                <!-- View 1: Form View -->
+                <div id="form-view" class="workspace-view active">
+                    <div class="form-canvas">
+                        <div class="mock-form-title interactive-hover" data-title="Form Header (Judul)"
+                            data-info="Bagian atas form yang sifatnya statis. Biasanya berisi judul utama aplikasi atau logo perusahaan.">
+                            Student Details
+                        </div>
+                        <div class="mock-form-content">
+                            <h3 style="margin-bottom:15px; border-bottom:1px solid #ccc; padding-bottom:5px;"
+                                class="interactive-hover" data-title="Form Heading"
+                                data-info="Teks penjelas (Label) yang membantu pengguna mengetahui kategori informasi atau record apa yang sedang mereka lihat.">
+                                Student Information</h3>
+
+                            <div class="mock-field-row">
+                                <span class="mock-field-label interactive-hover" data-title="Field Label"
+                                    data-info="Teks statis yang mendeskripsikan informasi apa yang harus dimasukkan ke kotak di sebelahnya. Sebaiknya disamakan dengan nama kolom di tabel agar jelas.">Student
+                                    ID:</span>
+                                <input type="text" class="mock-field-input interactive-hover" value="STU-001" readonly
+                                    data-title="Data Field (Text Box)"
+                                    data-info="Kotak input (*Text Box*) yang terikat langsung (*bound*) ke sebuah kolom di dalam tabel. Apa yang diketik di sini akan tersimpan ke dalam database.">
+                            </div>
+                            <div class="mock-field-row">
+                                <span class="mock-field-label interactive-hover" data-title="Field Label"
+                                    data-info="Teks statis yang mendeskripsikan informasi apa yang harus dimasukkan ke kotak di sebelahnya. Sebaiknya disamakan dengan nama kolom di tabel agar jelas.">Full
+                                    Name:</span>
+                                <input type="text" class="mock-field-input interactive-hover" value="Jane Doe" readonly
+                                    data-title="Data Field (Text Box)"
+                                    data-info="Kotak input (*Text Box*) yang terikat langsung (*bound*) ke sebuah kolom di dalam tabel. Apa yang diketik di sini akan tersimpan ke dalam database.">
+                            </div>
+                            <div class="mock-field-row">
+                                <span class="mock-field-label interactive-hover" data-title="Field Label"
+                                    data-info="Teks statis yang mendeskripsikan informasi apa yang harus dimasukkan ke kotak di sebelahnya. Sebaiknya disamakan dengan nama kolom di tabel agar jelas.">Major:</span>
+                                <input type="text" class="mock-field-input interactive-hover" value="Computer Science"
+                                    readonly data-title="Data Field (Text Box)"
+                                    data-info="Kotak input (*Text Box*) yang terikat langsung (*bound*) ke sebuah kolom di dalam tabel. Apa yang diketik di sini akan tersimpan ke dalam database.">
+                            </div>
+                        </div>
+                        <div class="mock-form-footer">
+                            <button class="mock-btn interactive-hover" data-title="Navigation Button"
+                                data-info="Tombol navigasi untuk berpindah melihat data siswa sebelumnya (*Previous*) atau data siswa selanjutnya (*Next*).">Previous
+                                Record</button>
+                            <button class="mock-btn interactive-hover" data-title="Navigation Button"
+                                data-info="Tombol navigasi untuk berpindah melihat data siswa sebelumnya (*Previous*) atau data siswa selanjutnya (*Next*).">Next
+                                Record</button>
+                            <span style="flex-grow:1"></span>
+                            <button class="mock-btn interactive-hover" data-title="Action Button"
+                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">Add
+                                Record</button>
+                            <button class="mock-btn interactive-hover" data-title="Action Button"
+                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">Delete
+                                Record</button>
+                            <button class="mock-btn interactive-hover" data-title="Action Button"
+                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">Main
+                                Form</button>
+                        </div>
+
+                        <!-- Form Wizard Popup -->
+                        <div id="form-wizard-popup" class="wizard-popup hidden">
+                            <div class="wizard-header">
+                                <span>Form Wizard</span>
+                                <span style="cursor:pointer" onclick="togglePopup('form-wizard-popup')">X</span>
+                            </div>
+                            <div class="wizard-body">
+                                <div
+                                    style="display:flex; gap:10px; align-items:center; background:#ffcb05; padding:8px; border:1px solid #e0b000;">
+                                    <div><i data-lucide="table-2" size="32"></i></div>
+                                    <div>Which fields do you want on your form?<br>You can choose from more than one
+                                        table or query.</div>
+                                </div>
+                                <div>
+                                    <label
+                                        style="font-weight:bold; display:block; margin-bottom:2px;">Tables/Queries</label>
+                                    <select style="width:200px; padding:2px;">
+                                        <option>Table: Tabel Anggota</option>
+                                    </select>
+                                </div>
+                                <div class="wizard-content-row">
+                                    <div style="flex:1">
+                                        <div style="font-weight:bold; margin-bottom:2px;">Available Fields:</div>
+                                        <div class="wizard-list">
+                                            <div class="wizard-list-item selected">Nama Lengkap</div>
+                                            <div class="wizard-list-item">Alamat</div>
+                                            <div class="wizard-list-item">NoTelp</div>
+                                            <div class="wizard-list-item">Email</div>
+                                            <div class="wizard-list-item">Tanggal Daftar</div>
+                                            <div class="wizard-list-item">Status</div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        style="display:flex; flex-direction:column; justify-content:center; gap:5px; padding:0 5px;">
+                                        <button class="wizard-btn">&gt;</button>
+                                        <button class="wizard-btn">&gt;&gt;</button>
+                                        <button class="wizard-btn">&lt;</button>
+                                        <button class="wizard-btn">&lt;&lt;</button>
+                                    </div>
+                                    <div style="flex:1">
+                                        <div style="font-weight:bold; margin-bottom:2px;">Selected Fields:</div>
+                                        <div class="wizard-list">
+                                            <div class="wizard-list-item">ID Anggota</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="wizard-footer">
+                                <button class="wizard-btn" onclick="togglePopup('form-wizard-popup')">Cancel</button>
+                                <button class="wizard-btn">&lt; Back</button>
+                                <button class="wizard-btn">Next &gt;</button>
+                                <button class="wizard-btn">Finish</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- View 2: Design View -->
+                <div id="design-view" class="workspace-view">
+                    <div class="design-canvas">
+
+                        <div class="design-band">Form Header</div>
+                        <div class="design-area" style="height: 100px;">
+                            <div class="design-control interactive-hover"
+                                style="top:25px; left:20px; width:220px; height:40px; border:none; background:transparent; font-size:24px; font-weight:normal; border: 1px dotted #999; display:flex; padding-left:5px;"
+                                data-title="Form Header Section"
+                                data-info="Area paling atas di Design View. Apapun yang diletakkan di sini (seperti judul form) akan selalu terlihat di bagian atas layar form.">
+                                Form Heading
+                            </div>
+                        </div>
+
+                        <div class="design-band">Detail</div>
+                        <div class="design-area interactive-hover" style="height: 200px;" data-title="Detail Section"
+                            data-info="Area paling penting dalam form. Di sinilah kamu meletakkan Label dan Text Box. Bagian ini akan menampilkan data *record* dari tabel secara dinamis.">
+                            <!-- Field 1 -->
+                            <div class="design-control interactive-hover"
+                                style="top:20px; left:20px; width:100px; height:22px; background:transparent; border:none; text-align:right; border:1px dotted #ccc;"
+                                data-title="Field Label"
+                                data-info="Teks statis yang mendeskripsikan informasi apa yang harus dimasukkan ke kotak di sebelahnya. Sebaiknya disamakan dengan nama kolom di tabel agar jelas.">
+                                Field Name
+                            </div>
+                            <div class="design-control interactive-hover"
+                                style="top:20px; left:130px; width:250px; height:22px; font-weight:bold;"
+                                data-title="Text Box Control (Bound)"
+                                data-info="Di dalam Design View, kotak ini tidak menampilkan data asli, melainkan hanya menampilkan nama *field* (kolom) yang dihubungkan ke tabel.">
+                                Data
+                            </div>
+
+                            <!-- Field 2 -->
+                            <div class="design-control interactive-hover"
+                                style="top:50px; left:20px; width:100px; height:22px; background:transparent; border:none; text-align:right; border:1px dotted #ccc;"
+                                data-title="Field Label"
+                                data-info="Teks statis yang mendeskripsikan informasi apa yang harus dimasukkan ke kotak di sebelahnya. Sebaiknya disamakan dengan nama kolom di tabel agar jelas.">
+                                Field Name
+                            </div>
+                            <div class="design-control interactive-hover"
+                                style="top:50px; left:130px; width:250px; height:22px; font-weight:bold;"
+                                data-title="Text Box Control (Bound)"
+                                data-info="Di dalam Design View, kotak ini tidak menampilkan data asli, melainkan hanya menampilkan nama *field* (kolom) yang dihubungkan ke tabel.">
+                                Data
+                            </div>
+
+                            <!-- Field 3 -->
+                            <div class="design-control interactive-hover"
+                                style="top:80px; left:20px; width:100px; height:22px; background:transparent; border:none; text-align:right; border:1px dotted #ccc;"
+                                data-title="Field Label"
+                                data-info="Teks statis yang mendeskripsikan informasi apa yang harus dimasukkan ke kotak di sebelahnya. Sebaiknya disamakan dengan nama kolom di tabel agar jelas.">
+                                Field Name
+                            </div>
+                            <div class="design-control interactive-hover"
+                                style="top:80px; left:130px; width:250px; height:22px; font-weight:bold;"
+                                data-title="Text Box Control (Bound)"
+                                data-info="Di dalam Design View, kotak ini tidak menampilkan data asli, melainkan hanya menampilkan nama *field* (kolom) yang dihubungkan ke tabel.">
+                                Data
+                            </div>
+
+                            <!-- Field 4 -->
+                            <div class="design-control interactive-hover"
+                                style="top:110px; left:20px; width:100px; height:22px; background:transparent; border:none; text-align:right; border:1px dotted #ccc;"
+                                data-title="Field Label"
+                                data-info="Teks statis yang mendeskripsikan informasi apa yang harus dimasukkan ke kotak di sebelahnya. Sebaiknya disamakan dengan nama kolom di tabel agar jelas.">
+                                Field Name
+                            </div>
+                            <div class="design-control interactive-hover"
+                                style="top:110px; left:130px; width:250px; height:22px; font-weight:bold;"
+                                data-title="Text Box Control (Bound)"
+                                data-info="Di dalam Design View, kotak ini tidak menampilkan data asli, melainkan hanya menampilkan nama *field* (kolom) yang dihubungkan ke tabel.">
+                                Data
+                            </div>
+
+                        </div>
+
+                        <div class="design-band">Form Footer</div>
+                        <div class="design-area interactive-hover" style="height: 80px;"
+                            data-title="Form Footer Section"
+                            data-info="Area bawah form. Sangat ideal untuk meletakkan tombol navigasi (*Next/Prev*) atau tombol operasi form (*Save/Close*).">
+                            <button class="design-control interactive-hover"
+                                style="top:25px; left:20px; width:100px; height:30px; background:#d0dafd; border:1px solid #777;"
+                                data-title="Action Button"
+                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">
+                                Previous Record
+                            </button>
+                            <button class="design-control interactive-hover"
+                                style="top:25px; left:130px; width:100px; height:30px; background:#d0dafd; border:1px solid #777;"
+                                data-title="Action Button"
+                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">
+                                Next Record
+                            </button>
+                            <button class="design-control interactive-hover"
+                                style="top:25px; left:240px; width:100px; height:30px; background:#d0dafd; border:1px solid #777;"
+                                data-title="Action Button"
+                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">
+                                Add Record
+                            </button>
+                            <button class="design-control interactive-hover"
+                                style="top:25px; left:350px; width:100px; height:30px; background:#d0dafd; border:1px solid #777;"
+                                data-title="Action Button"
+                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">
+                                Delete Record
+                            </button>
+                            <button class="design-control interactive-hover"
+                                style="top:25px; left:460px; width:100px; height:30px; background:#d0dafd; border:1px solid #777;"
+                                data-title="Action Button"
+                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">
+                                Main Form
+                            </button>
+                        </div>
+
+                        <!-- Button Wizard Popup -->
+                        <div id="button-wizard-popup" class="wizard-popup hidden"
+                            style="width: 550px; max-width: 95vw; overflow-x: auto;">
+                            <div style="min-width: 530px;">
+                                <div class="wizard-header">
+                                    <span>Command Button Wizard</span>
+                                    <span style="cursor:pointer" onclick="togglePopup('button-wizard-popup')">X</span>
+                                </div>
+                                <div class="wizard-body"
+                                    style="display:grid; grid-template-columns: 180px 1fr; gap:10px;">
+                                    <!-- Left Sample Area -->
+                                    <div style="background:#808080; height:200px; position:relative; padding:20px;">
+                                        <div style="color:black; font-weight:bold; margin-bottom:10px;">Sample:</div>
+                                        <div
+                                            style="background:#fff; width:80px; height:50px; border:1px solid #000; display:flex; align-items:center; justify-content:center; border-radius:3px; box-shadow: inset -1px -1px 2px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.8);">
+                                            <i id="wizard-sample-icon" data-lucide="search" size="20"></i>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right Content Area -->
+                                    <div style="display:flex; flex-direction:column; gap:10px;">
+                                        <div>
+                                            <div style="margin-bottom:8px;">What action do you want to happen when the
+                                                button is pressed?</div>
+                                            <div style="font-size:11px; color:#333;">Different actions are available for
+                                                each category.</div>
+                                        </div>
+
+                                        <div class="wizard-content-row" style="flex:1;">
+                                            <div style="flex:1;">
+                                                <div style="font-weight:bold; margin-bottom:2px;">Categories:</div>
+                                                <div class="wizard-list" id="wizard-category-list">
+                                                    <div class="wizard-list-item selected interactive-hover"
+                                                        data-category="navigation" data-title="Record Navigation"
+                                                        data-info="Perintah untuk berpindah antar data. Contoh aksinya: *Go To Next Record*, *Go To Previous Record*, atau *Find Record*.">
+                                                        Record Navigation</div>
+                                                    <div class="wizard-list-item interactive-hover"
+                                                        data-category="operations" data-title="Record Operations"
+                                                        data-info="Perintah untuk memanipulasi data di tabel. Contoh aksinya: Menambah (*Add New Record*), Menyimpan (*Save Record*), atau Menghapus (*Delete Record*).">
+                                                        Record Operations</div>
+                                                    <div class="wizard-list-item interactive-hover" data-category="form"
+                                                        data-title="Form Operations"
+                                                        data-info="Perintah yang mengatur form itu sendiri. Contoh aksinya: Membuka form lain (*Open Form*) atau menutup form yang sedang aktif (*Close Form*).">
+                                                        Form Operations</div>
+                                                    <div class="wizard-list-item interactive-hover"
+                                                        data-category="report" data-title="Report Operations"
+                                                        data-info="Perintah yang berhubungan dengan pencetakan. Contoh aksinya: Membuka pratinjau laporan (*Preview Report*) atau langsung mencetak ke printer (*Print Report*).">
+                                                        Report Operations</div>
+                                                    <div class="wizard-list-item interactive-hover"
+                                                        data-category="application" data-title="Application"
+                                                        data-info="Berisi perintah tingkat tinggi, seperti *Quit Application* untuk keluar dari program Microsoft Access secara keseluruhan.">
+                                                        Application</div>
+                                                    <div class="wizard-list-item interactive-hover" data-category="misc"
+                                                        data-title="Miscellaneous"
+                                                        data-info="Tindakan tambahan lainnya seperti mencetak tabel, menjalankan macro, atau menjalankan query tertentu.">
+                                                        Miscellaneous</div>
+                                                </div>
+                                            </div>
+                                            <div style="flex:1;">
+                                                <div style="font-weight:bold; margin-bottom:2px;">Actions:</div>
+                                                <div class="wizard-list" id="wizard-action-list">
+                                                    <div class="wizard-list-item selected interactive-hover"
+                                                        data-title="Find Next"
+                                                        data-info="Mencari data selanjutnya yang sesuai dengan kriteria pencarian yang sebelumnya telah dimasukkan oleh user.">
+                                                        Find Next</div>
+                                                    <div class="wizard-list-item interactive-hover"
+                                                        data-title="Find Record"
+                                                        data-info="Membuka kotak dialog &quot;Find&quot; agar user bisa mencari data atau teks tertentu di dalam form.">
+                                                        Find Record</div>
+                                                    <div class="wizard-list-item interactive-hover"
+                                                        data-title="Go To First Record"
+                                                        data-info="Langsung melompat ke data (record) paling pertama yang ada di dalam tabel.">
+                                                        Go To First Record</div>
+                                                    <div class="wizard-list-item interactive-hover"
+                                                        data-title="Go To Last Record"
+                                                        data-info="Langsung melompat ke data (record) paling akhir atau yang paling baru ditambahkan di dalam tabel.">
+                                                        Go To Last Record</div>
+                                                    <div class="wizard-list-item interactive-hover"
+                                                        data-title="Go To Next Record"
+                                                        data-info="Berpindah maju ke satu data (record) berikutnya di urutan tabel.">
+                                                        Go To Next Record</div>
+                                                    <div class="wizard-list-item interactive-hover"
+                                                        data-title="Go To Previous Record"
+                                                        data-info="Berpindah mundur ke satu data (record) sebelumnya di urutan tabel.">
+                                                        Go To Previous Record</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="wizard-footer">
+                                    <button class="wizard-btn"
+                                        onclick="togglePopup('button-wizard-popup')">Cancel</button>
+                                    <button class="wizard-btn">&lt; Back</button>
+                                    <button class="wizard-btn">Next &gt;</button>
+                                    <button class="wizard-btn">Finish</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <aside class="info-panel">
+            <div class="info-content">
+                <h2 id="info-title" class="fade-in">Forms</h2>
+                <p id="info-desc" class="fade-in">
+                    Form adalah antarmuka (*interface*) agar user bisa menginput data dengan mudah tanpa melihat tabel
+                    mentah. Form berfungsi ganda sebagai alat input sekaligus output data. Beralihlah ke tab 'Design
+                    View' untuk melihat bagaimana form disusun!
+                </p>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="nav-logo" style="color: white; margin-bottom: 1rem;">Access Guide</div>
+                <p>Panduan interaktif untuk mempelajari Microsoft Access dengan mudah.</p>
+            </div>
+
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Overview</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="tables.html">Tables</a></li>
+                        <li><a href="relationships.html">Relationships</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Advanced</h4>
+                    <ul>
+                        <li><a href="queries.html">Queries</a></li>
+                        <li><a href="forms.html">Forms</a></li>
+                        <li><a href="reports.html">Reports</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>&copy; 2026 Access Guide Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/global.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // --- Form Logic ---
+
+        const toolbar = document.getElementById('toolbar');
+        const formViewTab = document.querySelector('.access-tab[data-view="form-view"]');
+        const designViewTab = document.querySelector('.access-tab[data-view="design-view"]');
+        const formView = document.getElementById('form-view');
+        const designView = document.getElementById('design-view');
+        const infoTitle = document.getElementById('info-title');
+        const infoDesc = document.getElementById('info-desc');
+        const accessTabs = document.querySelectorAll('.access-tab');
+
+        // Tool Data
+        const formTools = [
+            { icon: 'layout-template', title: 'Form (Standard)', text: 'Form', info: 'Membuat form standar yang menampilkan satu record per layar secara instan. Tampilannya sederhana dan langsung jadi.', clickable: false },
+            { icon: 'drafting-compass', title: 'Form Design', text: 'Form Design', info: 'Membuat form kosong baru di layar Design View, memberikanmu kontrol penuh dari awal untuk mendesain tata letak.', clickable: false },
+            { icon: 'square', title: 'Blank Form', text: 'Blank Form', info: 'Membuat form kosong langsung di tampilan Layout View agar bisa disesuaikan sambil melihat datanya.', clickable: false },
+            { icon: 'wand-2', title: 'Form Wizard', text: 'Form Wizard', info: 'Fitur panduan otomatis yang akan menanyakan langkah-demi-langkah *field* apa saja yang ingin kamu masukkan untuk membangun sebuah form.', clickable: true, id: 'btn-form-wizard' },
+            { icon: 'table-rows-split', title: 'Multiple Items Form', text: 'Multiple Items', info: 'Mirip tabel biasa, tetapi bisa dikustomisasi dengan tombol atau warna. Menampilkan banyak record sekaligus dalam satu layar (continuous form).', clickable: false },
+            { icon: 'navigation', title: 'Navigation Form', text: 'Navigation', info: 'Form khusus yang berfungsi sebagai "Menu Utama" atau dashboard. Berisi tab/tombol untuk membuka form atau report lain, membuat aplikasi terlihat seperti website profesional.', clickable: false }
+        ];
+
+        const designTools = [
+            { icon: 'type', title: 'Text Box Control', text: 'Text Box', info: 'Kontrol utama untuk menampilkan data dari tabel, serta tempat di mana pengguna mengetikkan atau mengedit data baru.', clickable: false },
+            { icon: 'a-large-small', title: 'Label Control', text: 'Label', info: 'Menambahkan teks statis seperti judul, petunjuk, atau nama kolom yang posisinya tetap dan tidak bisa diedit oleh pengguna biasa.', clickable: false },
+            { icon: 'mouse-pointer-click', title: 'Command Button', text: 'Button', info: 'Tombol aksi yang bisa diklik oleh pengguna. Biasanya digunakan untuk Save, Delete, Print Record, atau berpindah halaman.', clickable: true, id: 'btn-button-wizard' }
+        ];
+
+        function renderToolbar(tools) {
+            toolbar.innerHTML = '';
+            tools.forEach(tool => {
+                const el = document.createElement('div');
+                el.className = 'tool-icon-box interactive-hover';
+                if (tool.clickable) el.classList.add('clickable-tool');
+                el.dataset.title = tool.title || tool.text;
+                el.dataset.info = tool.info;
+                el.innerHTML = `<i data-lucide="${tool.icon}" width="24" height="24"></i><span class="tool-text">${tool.text}</span>`;
+
+                // Add click listener ONLY for key tools
+                if (tool.id) {
+                    el.onclick = () => {
+                        if (tool.id === 'btn-form-wizard') togglePopup('form-wizard-popup');
+                        if (tool.id === 'btn-button-wizard') togglePopup('button-wizard-popup');
+                    };
+                }
+
+                toolbar.appendChild(el);
+            });
+            lucide.createIcons();
+            attachHoverListeners(); // Re-attach for new toolbar items
+        }
+
+        function switchView(viewName) {
+            accessTabs.forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.workspace-view').forEach(v => v.classList.remove('active'));
+
+            // Hide all popups when switching
+            document.querySelectorAll('.wizard-popup').forEach(p => p.classList.add('hidden'));
+
+            if (viewName === 'form-view') {
+                formViewTab.classList.add('active');
+                formView.classList.add('active');
+                renderToolbar(formTools);
+                // info update handled by hover on tab, or we can force it here
+                // updateInfo("Form View", "You are now in Form View. Use the toolbar to create new forms or interact with the simulated form below.");
+            } else {
+                designViewTab.classList.add('active');
+                designView.classList.add('active');
+                renderToolbar(designTools);
+                // updateInfo("Design View", "You are now in Design View. Grid lines help you align controls. Use the toolbar to add controls like Buttons.");
+            }
+        }
+
+        function togglePopup(id) {
+            const popup = document.getElementById(id);
+            if (popup.classList.contains('hidden')) {
+                // Hide others first? Maybe not needed for these two specific modes
+                popup.classList.remove('hidden');
+            } else {
+                popup.classList.add('hidden');
+            }
+        }
+
+        function updateInfo(title, desc) {
+            if (!title) return;
+            infoTitle.innerText = title;
+            infoDesc.innerText = desc;
+
+            // Retrigger animation
+            infoTitle.classList.remove('fade-in');
+            infoDesc.classList.remove('fade-in');
+            void infoTitle.offsetWidth; // trigger reflow
+            infoTitle.classList.add('fade-in');
+            infoDesc.classList.add('fade-in');
+        }
+
+        function attachHoverListeners() {
+            document.querySelectorAll('.interactive-hover').forEach(el => {
+                // clear old listeners to avoid dupes? 
+                // simpler to just add to new elements or delegate. 
+                // For this simple sim, re-adding to specific elements is okay if we are careful.
+                // Better: Delegation
+            });
+        }
+
+        // Event Delegation for Hovers (Better performance & handles dynamic elements)
+        document.body.addEventListener('mouseover', (e) => {
+            const target = e.target.closest('.interactive-hover');
+            if (target && target.dataset.info) {
+                // Only update if content changed to avoid flicker
+                if (infoDesc.innerText !== target.dataset.info) {
+                    updateInfo(target.dataset.title || target.innerText.split('\n')[0] || "Info", target.dataset.info);
+                }
+            }
+        });
+
+        // Init
+        formViewTab.addEventListener('click', () => switchView('form-view'));
+        designViewTab.addEventListener('click', () => switchView('design-view'));
+
+        switchView('form-view'); // Default
+
+        // --- Wizard Logic ---
+        const categoryData = {
+            'navigation': {
+                icon: 'search',
+                actions: [
+                    { name: 'Find Next', desc: 'Mencari data selanjutnya yang sesuai dengan kriteria pencarian yang sebelumnya telah dimasukkan oleh user.' },
+                    { name: 'Find Record', desc: 'Membuka kotak dialog "Find" agar user bisa mencari data atau teks tertentu di dalam form.' },
+                    { name: 'Go To First Record', desc: 'Langsung melompat ke data (record) paling pertama yang ada di dalam tabel.' },
+                    { name: 'Go To Last Record', desc: 'Langsung melompat ke data (record) paling akhir atau yang paling baru ditambahkan di dalam tabel.' },
+                    { name: 'Go To Next Record', desc: 'Berpindah maju ke satu data (record) berikutnya di urutan tabel.' },
+                    { name: 'Go To Previous Record', desc: 'Berpindah mundur ke satu data (record) sebelumnya di urutan tabel.' }
+                ]
+            },
+            'operations': {
+                icon: 'file-plus',
+                actions: [
+                    { name: 'Add New Record', desc: 'Membersihkan tampilan form dan menyiapkan baris kosong agar user bisa memasukkan data (record) baru.' },
+                    { name: 'Delete Record', desc: 'Menghapus data (record) yang saat ini sedang tampil atau dipilih secara permanen dari database.' },
+                    { name: 'Duplicate Record', desc: 'Menyalin seluruh isi data (record) yang sedang aktif untuk membuat data baru yang identik.' },
+                    { name: 'Print Record', desc: 'Hanya mencetak data (record) tunggal yang saat ini sedang ditampilkan di layar form ke mesin printer.' },
+                    { name: 'Save Record', desc: 'Menyimpan perubahan yang baru saja diketik atau diedit pada data saat ini ke dalam database.' },
+                    { name: 'Undo Record', desc: 'Membatalkan ketikan atau perubahan terakhir pada data saat ini jika belum terlanjur disimpan (Save).' }
+                ]
+            },
+            'form': {
+                icon: 'layout-template',
+                actions: [
+                    { name: 'Apply Form Filter', desc: 'Mengaktifkan filter pada form untuk menyembunyikan data yang tidak relevan dan hanya menampilkan data yang sesuai kriteria.' },
+                    { name: 'Close Form', desc: 'Menutup jendela form yang saat ini sedang aktif atau terbuka.' },
+                    { name: 'Open Form', desc: 'Membuka jendela form lain yang ada di dalam database. Biasanya digunakan untuk membuat menu navigasi utama.' },
+                    { name: 'Print a Form', desc: 'Mencetak keseluruhan isi dari sebuah form tertentu.' },
+                    { name: 'Print Current Form', desc: 'Langsung mencetak tampilan form yang saat ini sedang aktif atau sedang digunakan oleh user.' },
+                    { name: 'Refresh Form Data', desc: 'Memperbarui tampilan data di form untuk memastikan user melihat data paling mutakhir (berguna jika database digunakan banyak orang bersamaan).' }
+                ]
+            },
+            'report': {
+                icon: 'file-text',
+                actions: [
+                    { name: 'Mail Report', desc: 'Melampirkan laporan (report) secara otomatis ke dalam email untuk dikirim ke orang lain.' },
+                    { name: 'Open Report', desc: 'Membuka sebuah laporan dalam tampilan standar untuk dilihat.' },
+                    { name: 'Preview Report', desc: 'Membuka laporan dalam mode *Print Preview* agar user bisa melihat persis bagaimana laporan tersebut akan tercetak di kertas.' },
+                    { name: 'Print Report', desc: 'Langsung mengirimkan dokumen laporan (report) ke mesin printer tanpa membuka mode *preview* terlebih dahulu.' },
+                    { name: 'Send Report to File', desc: 'Mengekspor atau menyimpan laporan menjadi format file eksternal (seperti PDF atau format teks).' }
+                ]
+            },
+            'application': {
+                icon: 'x-circle',
+                actions: [
+                    { name: 'Quit Application', desc: 'Perintah untuk keluar dan menutup program Microsoft Access secara keseluruhan dengan aman.' }
+                ]
+            },
+            'misc': {
+                icon: 'settings',
+                actions: [
+                    { name: 'Auto Dialer', desc: 'Memerintahkan sistem untuk secara otomatis memanggil nomor telepon yang ada di data saat ini (membutuhkan modem telepon yang terhubung).' },
+                    { name: 'Print Table', desc: 'Mencetak keseluruhan baris dan kolom dari sebuah tabel langsung ke printer.' },
+                    { name: 'Run Macro', desc: 'Menjalankan *Macro* (kumpulan perintah otomatis) yang sudah diprogram sebelumnya di dalam database.' },
+                    { name: 'Run Query', desc: 'Mengeksekusi sebuah *Query*, baik untuk menampilkan hasil pencarian maupun menjalankan perintah *Update*, *Append*, atau *Delete*.' }
+                ]
+            }
+        };
+
+        const categoryList = document.getElementById('wizard-category-list');
+        const actionList = document.getElementById('wizard-action-list');
+        const sampleIcon = document.getElementById('wizard-sample-icon');
+
+        if (categoryList) {
+            categoryList.addEventListener('click', (e) => {
+                const item = e.target.closest('.wizard-list-item');
+                if (!item) return;
+
+                // Update Category Selection highlighting
+                categoryList.querySelectorAll('.wizard-list-item').forEach(el => el.classList.remove('selected'));
+                item.classList.add('selected');
+
+                const catKey = item.dataset.category;
+                const data = categoryData[catKey];
+
+                if (data) {
+                    // Update Actions List
+                    actionList.innerHTML = '';
+                    data.actions.forEach((act, idx) => {
+                        const div = document.createElement('div');
+                        div.className = 'wizard-list-item interactive-hover';
+                        if (idx === 0) div.classList.add('selected'); // Auto select first item
+                        div.textContent = act.name;
+                        div.dataset.title = act.name;
+                        div.dataset.info = act.desc;
+                        actionList.appendChild(div);
+                    });
+
+                    // Update Sample Icon
+                    sampleIcon.setAttribute('data-lucide', data.icon);
+                    lucide.createIcons();
+                }
+            });
+        }
+
+        if (actionList) {
+            actionList.addEventListener('click', (e) => {
+                const item = e.target.closest('.wizard-list-item');
+                if (!item) return;
+                actionList.querySelectorAll('.wizard-list-item').forEach(el => el.classList.remove('selected'));
+                item.classList.add('selected');
+            });
+        }
+
+    </script>
+</body>
+
+</html>

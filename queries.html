@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Design | MS Access Guide</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/simulation.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="container navbar">
+            <div class="nav-logo">Access Guide</div>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tables.html">Tables</a></li>
+                <li><a href="relationships.html">Relationships</a></li>
+                <li><a href="queries.html">Queries</a></li>
+                <li><a href="forms.html">Forms</a></li>
+                <li><a href="reports.html">Reports</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="container main-layout">
+
+        <!-- Left: Simulation -->
+        <div class="simulation-container">
+
+            <div class="access-ribbon">
+                <div class="access-tabs">
+                    <span class="access-tab active">Query Tools</span>
+                </div>
+                <div class="access-toolbar">
+                    <!-- Group 1: Views/Create -->
+                    <div class="toolbar-group interactive-area" data-title="Query Wizard"
+                        data-desc="Panduan langkah-demi-langkah secara otomatis untuk membuat query sederhana dengan cepat.">
+                        <i data-lucide="wand-2" class="toolbar-icon"></i>
+                        <span>Query Wizard</span>
+                    </div>
+                    <div class="toolbar-group interactive-area" data-title="Query Design"
+                        data-desc="Tampilan manual berbentuk grid untuk menyusun logika query yang kompleks secara visual, seperti menambahkan filter, pengurutan (sort), atau rumus.">
+                        <i data-lucide="ruler" class="toolbar-icon"></i>
+                        <span>Query Design</span>
+                    </div>
+
+                    <div class="separator-v"></div>
+
+                    <!-- Group 2: Query Type -->
+                    <div class="toolbar-group interactive-area clickable-tool" id="btn-select" data-type="select"
+                        data-title="Select Query"
+                        data-desc="Jenis query default yang paling aman. Fungsinya hanya untuk mencari dan menampilkan data tanpa mengubah isi database sama sekali.">
+                        <i data-lucide="table-2" class="toolbar-icon"></i>
+                        <span>Select</span>
+                    </div>
+                    <div class="toolbar-group interactive-area clickable-tool" id="btn-make-table"
+                        data-type="make-table" data-title="Make Table Query"
+                        data-desc="Menjalankan query dan langsung membuat tabel baru yang berisi hasil pencarian tersebut. Berguna untuk membuat backup data spesifik.">
+                        <i data-lucide="plus-square" class="toolbar-icon"></i>
+                        <span>Make Table</span>
+                    </div>
+                    <div class="toolbar-group interactive-area clickable-tool" id="btn-append" data-type="append"
+                        data-title="Append Query"
+                        data-desc="Menambahkan atau menyalin data hasil query dari satu tabel ke tabel lain yang sudah ada. Sangat berguna untuk mengarsipkan data lama.">
+                        <i data-lucide="file-plus" class="toolbar-icon"></i>
+                        <span>Append</span>
+                    </div>
+                    <div class="toolbar-group interactive-area clickable-tool" id="btn-update" data-type="update"
+                        data-title="Update Query"
+                        data-desc="Mengubah data secara massal dalam satu klik. Contoh: Digunakan untuk menaikkan semua harga barang sebesar 10% secara bersamaan.">
+                        <i data-lucide="edit-3" class="toolbar-icon"></i>
+                        <span>Update</span>
+                    </div>
+                    <div class="toolbar-group interactive-area clickable-tool" id="btn-crosstab" data-type="crosstab"
+                        data-title="Crosstab Query"
+                        data-desc="Meringkas data dalam bentuk matriks (baris dan kolom), sangat mirip dengan fitur PivotTable di Excel. Memudahkan analisis data yang kompleks.">
+                        <i data-lucide="grid-3x3" class="toolbar-icon"></i>
+                        <span>Crosstab</span>
+                    </div>
+
+                    <div class="separator-v"></div>
+
+                    <!-- Group 3: Show/Hide -->
+                    <div class="toolbar-group interactive-area clickable-tool" id="btn-totals" data-type="totals"
+                        data-title="Totals (Group By)"
+                        data-desc="Memunculkan baris &quot;Total&quot; untuk menghitung statistik data (seperti Sum, Count, Avg, Min, Max). Contoh: Menghitung total penjualan per Salesman.">
+                        <i data-lucide="sigma" class="toolbar-icon"></i>
+                        <span>Totals</span>
+                    </div>
+                    <div class="toolbar-group interactive-area clickable-tool" id="btn-parameters"
+                        data-type="parameters" data-title="Parameter Query"
+                        data-desc="Membuat query yang &quot;bertanya&quot; kepada user sebelum berjalan. Contoh: Saat dijalankan, akan muncul popup box meminta input nama sebelum data dicari.">
+                        <i data-lucide="help-circle" class="toolbar-icon"></i>
+                        <span>Para<br>meters</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="qbe-container">
+
+                <!-- TOP: Tables -->
+                <div class="qbe-top interactive-area" data-title="Table Pane (Area Tabel)"
+                    data-desc="Menampilkan tabel-tabel yang digunakan sebagai sumber data query. Kamu bisa melakukan klik ganda (double-click) pada nama *field* di sini untuk memasukkannya ke dalam grid di bawah.">
+
+                    <div class="table-box" style="top: 20px; left: 20px;">
+                        <div class="table-header">Customers</div>
+                        <ul class="table-fields">
+                            <li class="field-pk">CustomerID</li>
+                            <li>FullName</li>
+                            <li>City</li>
+                            <li>JoinDate</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <!-- BOTTOM: Grid -->
+                <div class="qbe-bottom">
+                    <table class="design-grid" id="query-grid" style="width: 100%; height: 100%;">
+                        <!-- Field Row -->
+                        <tr class="interactive-area" data-title="Baris Field"
+                            data-desc="Kolom data spesifik yang ingin ditampilkan atau dihitung dalam hasil query.">
+                            <th style="width: 100px;">Field:</th>
+                            <td>FullName</td>
+                            <td>City</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <!-- Table Row -->
+                        <tr class="interactive-area" data-title="Baris Table"
+                            data-desc="Menampilkan informasi asal tabel dari data tersebut (berguna jika query mengambil data dari banyak tabel yang berelasi).">
+                            <th>Table:</th>
+                            <td>Customers</td>
+                            <td>Customers</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <!-- Total Row (Hidden by default) -->
+                        <tr class="interactive-area row-hidden" id="row-total" data-title="Baris Total"
+                            data-desc="Digunakan untuk mengelompokkan data (Group By) atau melakukan fungsi matematika seperti menjumlahkan (Sum) dan menghitung jumlah baris (Count).">
+                            <th>Total:</th>
+                            <td>Group By</td>
+                            <td>Group By</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <!-- Crosstab Row (Hidden by default) -->
+                        <tr class="interactive-area row-hidden" id="row-crosstab" data-title="Baris Crosstab"
+                            data-desc="Hanya muncul di Crosstab Query. Digunakan untuk menentukan *Row Heading* (Judul Baris), *Column Heading* (Judul Kolom), dan *Value* (Nilai yang dihitung).">
+                            <th>Crosstab:</th>
+                            <td>Row Heading</td>
+                            <td>Column Heading</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <!-- Sort Row -->
+                        <tr class="interactive-area" id="row-sort" data-title="Baris Sort"
+                            data-desc="Mengurutkan hasil data. Bisa dipilih *Ascending* (A-Z / Kecil ke Besar) atau *Descending* (Z-A / Besar ke Kecil).">
+                            <th>Sort:</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <!-- Append To Row (Hidden by default) -->
+                        <tr class="interactive-area row-hidden" id="row-append" data-title="Baris Append To"
+                            data-desc="Menentukan nama kolom tujuan di tabel lain tempat data ini akan ditempelkan (disalin).">
+                            <th>Append To:</th>
+                            <td>CustomerName</td>
+                            <td>CityRegion</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <!-- Update To Row (Hidden by default) -->
+                        <tr class="interactive-area row-hidden" id="row-update" data-title="Baris Update To"
+                            data-desc="Tempat memasukkan nilai baru atau rumus untuk mengubah data secara massal. Contoh: Ketik `[Harga]*1.1` untuk menaikkan harga 10%.">
+                            <th>Update To:</th>
+                            <td></td>
+                            <td>"New City"</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <!-- Show Row -->
+                        <tr class="interactive-area" id="row-show" data-title="Baris Show"
+                            data-desc="Checkbox untuk menyembunyikan atau menampilkan kolom di hasil akhir. Berguna jika sebuah kolom hanya dipakai untuk *filter* tapi tidak ingin ditampilkan.">
+                            <th>Show:</th>
+                            <td style="text-align: center;"><input type="checkbox" checked></td>
+                            <td style="text-align: center;"><input type="checkbox" checked></td>
+                            <td><input type="checkbox" checked></td>
+                            <td><input type="checkbox" checked></td>
+                        </tr>
+
+                        <!-- Criteria Row -->
+                        <tr class="interactive-area" id="row-criteria" data-title="Baris Criteria (Filter)"
+                            data-desc="Kondisi atau filter data. Contoh: Ketik =&quot;Jakarta&quot; di bawah kolom Kota untuk hanya menampilkan data pelanggan dari Jakarta.">
+                            <th>Criteria:</th>
+                            <td></td>
+                            <td>"Jakarta"</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <!-- Or Row -->
+                        <tr class="interactive-area" id="row-or" data-title="Baris Or (Atau)"
+                            data-desc="Baris tambahan di bawah *Criteria* untuk logika &quot;ATAU&quot;. Jika salah satu syarat (di baris Criteria ATAU baris Or) terpenuhi, data akan ditampilkan.">
+                            <th>or:</th>
+                            <td></td>
+                            <td>"Bandung"</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- Embedded Side Modals -->
+            <!-- Make Table Modal -->
+            <div id="modal-make-table" class="modal-overlay sim-modal-embedded hidden">
+                <div class="modern-dialog interactive-area" data-title="Dialog Make Table"
+                    data-desc="Meminta kamu memasukkan nama untuk tabel baru yang akan dibuat berdasarkan hasil query saat ini.">
+                    <div class="dialog-header-bar">
+                        <span>Make Table</span>
+                        <i data-lucide="x" class="close-modal pointer" style="cursor: pointer;"></i>
+                    </div>
+                    <div class="dialog-body">
+                        <p class="mb-2">Make New Table</p>
+                        <div class="dialog-group">
+                            <label class="dialog-label">Table Name:</label>
+                            <input type="text" class="modern-select" value="New_Customers_Segment">
+                        </div>
+                        <div class="checkbox-group mb-2">
+                            <label class="checkbox-item">
+                                <input type="radio" name="db-dest" checked>
+                                <span class="checkbox-label">Current Database</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="radio" name="db-dest">
+                                <span class="checkbox-label">Another Database</span>
+                            </label>
+                        </div>
+                        <div class="btn-row">
+                            <button class="dialog-btn btn-primary close-modal-btn">OK</button>
+                            <button class="dialog-btn btn-secondary close-modal-btn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Append Modal -->
+            <div id="modal-append" class="modal-overlay sim-modal-embedded hidden">
+                <div class="modern-dialog interactive-area" data-title="Dialog Append"
+                    data-desc="Memilih tabel tujuan yang sudah ada di dalam database untuk ditambahkan *record* baru dari query ini.">
+                    <div class="dialog-header-bar">
+                        <span>Append</span>
+                        <i data-lucide="x" class="close-modal pointer" style="cursor: pointer;"></i>
+                    </div>
+                    <div class="dialog-body">
+                        <p class="mb-2">Append To</p>
+                        <div class="dialog-group">
+                            <label class="dialog-label">Table Name:</label>
+                            <select class="modern-select">
+                                <option>Archived_Customers</option>
+                                <option>Loyalty_Members</option>
+                            </select>
+                        </div>
+                        <div class="checkbox-group mb-2">
+                            <label class="checkbox-item">
+                                <input type="radio" name="app-dest" checked>
+                                <span class="checkbox-label">Current Database</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="radio" name="app-dest">
+                                <span class="checkbox-label">Another Database</span>
+                            </label>
+                        </div>
+                        <div class="btn-row">
+                            <button class="dialog-btn btn-primary close-modal-btn">OK</button>
+                            <button class="dialog-btn btn-secondary close-modal-btn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parameters Modal -->
+            <div id="modal-parameters" class="modal-overlay sim-modal-embedded hidden"
+                style="max-height: 80vh; transform: scale(0.95);">
+                <div class="modern-dialog interactive-area" data-title="Dialog Query Parameters"
+                    data-desc="Mendefinisikan tipe data spesifik untuk parameter (prompt pertanyaan) agar input dari *user* tidak salah format (misal: membatasi jawaban hanya berupa *Date/Time* atau *Currency*).">
+                    <div class="dialog-header-bar">
+                        <span>Query Parameters</span>
+                        <i data-lucide="x" class="close-modal pointer" style="cursor: pointer;"></i>
+                    </div>
+                    <div class="dialog-body" style="overflow-y: auto; max-height: calc(80vh - 50px);">
+                        <table
+                            style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #333;">
+                                    <th style="text-align: left; padding: 0.5rem;">Parameter</th>
+                                    <th style="text-align: left; padding: 0.5rem;">Data Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 0.8rem 0.5rem;">[Enter Region]</td>
+                                    <td style="padding: 0.8rem 0.5rem;">Short Text</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 0.8rem 0.5rem;">[Min Purchase]</td>
+                                    <td style="padding: 0.8rem 0.5rem;">Currency</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="btn-row">
+                            <button class="dialog-btn btn-primary close-modal-btn">OK</button>
+                            <button class="dialog-btn btn-secondary close-modal-btn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <aside class="info-panel">
+            <div class="info-content">
+                <h2 id="info-title" class="fade-in">Query Design</h2>
+                <p id="info-desc" class="fade-in">
+                    Query adalah "pertanyaan" atau perintah yang kita kirim ke database untuk memanipulasi data. Jauh
+                    lebih fleksibel daripada tabel, fitur <em>Query By Example</em> (QBE) memungkinkanmu menyusun query
+                    SQL yang rumit secara visual. Arahkan kursor pada <strong>Criteria</strong> atau
+                    <strong>Sort</strong> untuk mempelajari fungsinya!
+                </p>
+            </div>
+        </aside>
+
+        <!-- Modals moved inside simulation container -->
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="nav-logo" style="color: white; margin-bottom: 1rem;">Access Guide</div>
+                <p>Panduan interaktif untuk mempelajari Microsoft Access dengan mudah.</p>
+            </div>
+
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Overview</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="tables.html">Tables</a></li>
+                        <li><a href="relationships.html">Relationships</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Advanced</h4>
+                    <ul>
+                        <li><a href="queries.html">Queries</a></li>
+                        <li><a href="forms.html">Forms</a></li>
+                        <li><a href="reports.html">Reports</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>&copy; 2026 Access Guide Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/global.js"></script>
+    <script src="js/interactions.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,587 @@
+/* MS Access Simulation UI Styles */
+
+/* Access Ribbon & Toolbar Styles (New) */
+.access-ribbon {
+    background-color: white;
+    border-bottom: 1px solid var(--access-border);
+    display: flex;
+    flex-direction: column;
+}
+
+.access-tabs {
+    display: flex;
+    background-color: white;
+    padding-left: 1rem;
+    border-bottom: 1px solid var(--access-border);
+}
+
+.access-tab {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    border: 1px solid transparent;
+    border-bottom: none;
+    margin-bottom: -1px;
+    z-index: 1;
+}
+
+.access-tab.active {
+    color: var(--access-red);
+    border: 1px solid var(--access-border);
+    border-bottom: 1px solid white;
+    font-weight: 600;
+    background-color: white;
+}
+
+.access-toolbar {
+    display: flex;
+    flex-direction: row;
+    /* FORCE ROW */
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: #F0F0F0;
+    /* Standard Access Gray */
+    gap: 0.5rem;
+    height: 100px;
+    /* Fixed height for ribbon */
+    overflow-x: auto;
+}
+
+.toolbar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+    min-width: 60px;
+    height: 80%;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    text-align: center;
+    gap: 4px;
+}
+
+.toolbar-group:hover,
+.toolbar-group.active-tool {
+    background-color: #e5e5e5;
+    /* Hover gray */
+    border-color: #d1d1d1;
+}
+
+.clickable-tool.active-tool {
+    background-color: #F8D9D9;
+    /* Light red for active toggles */
+    outline: 1px solid var(--access-red);
+    border-color: var(--access-red);
+}
+
+.toolbar-group .toolbar-icon {
+    width: 28px;
+    height: 28px;
+    color: #444;
+}
+
+.toolbar-group span {
+    font-size: 0.75rem;
+    line-height: 1.1;
+    color: #333;
+}
+
+/* QBE Container Layout */
+.qbe-container {
+    display: flex;
+    flex-direction: column;
+    height: 670px;
+    /* Fixed height for simulation */
+}
+
+.qbe-top {
+    height: 50%;
+    /* Top half */
+    background-color: #F0F0F0;
+    position: relative;
+    border-bottom: 1px solid var(--access-border);
+    overflow: hidden;
+}
+
+.qbe-bottom {
+    height: 50%;
+    /* Bottom half */
+    background-color: white;
+    overflow: auto;
+}
+
+/* Simulation Header (Old Tab System - Keeping for compatibility if needed elsewhere) */
+.sim-header {
+    background-color: white;
+    border-bottom: 1px solid var(--access-border);
+    padding: 0 1rem;
+    display: flex;
+    gap: 2rem;
+    height: 50px;
+    align-items: flex-end;
+    /* Align tabs to bottom of header */
+}
+
+.sim-tab {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    font-family: 'Merriweather', serif;
+    margin-bottom: -1px;
+    /* Overlap border */
+}
+
+.sim-tab:hover {
+    color: var(--access-red);
+    background-color: #FFF5F5;
+}
+
+.sim-tab.active {
+    color: var(--access-red);
+    border-bottom: 3px solid var(--access-red);
+    background-color: #FFF5F5;
+}
+
+/* Simulation Container */
+.simulation-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: var(--panel-shadow);
+    overflow: hidden;
+    border: 1px solid var(--ui-border);
+    display: flex;
+    flex-direction: column;
+}
+
+/* View Containers */
+.view-section {
+    width: 100%;
+    height: 100%;
+    /* Critical for SVG lines to show */
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #FFFFFF;
+    transition: opacity 0.3s ease;
+}
+
+.view-section.hidden {
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.view-section.active {
+    opacity: 1;
+    z-index: 1;
+}
+
+/* Edit Dialog Styling */
+.edit-view-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: #F8F9FA;
+    overflow-y: auto;
+    /* Allow scrolling if screen is short */
+    padding: 2rem 0;
+    /* Add vertical breathing room */
+}
+
+.modern-dialog {
+    background: white;
+    border-radius: 6px;
+    /* Removed shadow as requested */
+    border: 1px solid #ddd;
+    width: 90%;
+    max-width: 480px;
+    overflow: hidden;
+    animation: slideUp 0.4s ease-out;
+    margin: auto;
+    /* Ensure centering works with flex/scroll */
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.dialog-header-bar {
+    background: linear-gradient(135deg, var(--access-red), #8B2E30);
+    color: white;
+    padding: 1rem 1.5rem;
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dialog-body {
+    padding: 1.5rem 2rem;
+    /* Compacted spacing */
+}
+
+.dialog-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    /* Reduced margin */
+    gap: 1rem;
+}
+
+.dialog-col {
+    width: 48%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.dialog-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.modern-select {
+    padding: 0.5rem;
+    /* Reduced padding */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    background-color: #fcfcfc;
+}
+
+.dialog-group {
+    background-color: #fcfcfc;
+    border: 1px solid #efefef;
+    border-radius: 6px;
+    padding: 1rem;
+    /* Reduced padding */
+    margin-bottom: 1rem;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.2rem 0;
+    cursor: pointer;
+}
+
+.checkbox-item input[type="checkbox"] {
+    accent-color: var(--access-red);
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-label {
+    font-size: 0.95rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.relationship-type-display {
+    background: #eeeeee;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: help;
+    border: 1px solid #e0e0e0;
+}
+
+.btn-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    /* Reduced margin */
+}
+
+.dialog-btn {
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: linear-gradient(to bottom, var(--access-red), #8B2E30);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(to bottom, #8B2E30, #6d2022);
+}
+
+.btn-secondary {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.btn-secondary:hover {
+    background-color: #f0f0f0;
+}
+
+/* Relationship Window specific */
+.relationship-canvas {
+    background-color: #FFFFFF;
+    height: 600px;
+    /* Increased height significantly */
+    position: relative;
+    border-top: 1px solid var(--access-border);
+    /* Separator from header */
+    background-image: radial-gradient(#E0E0E0 1px, transparent 1px);
+    background-size: 20px 20px;
+    overflow: hidden;
+}
+
+.table-box {
+    width: 180px;
+    background: white;
+    border: 1px solid #999;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    border-top: 4px solid var(--access-red);
+    transition: transform 0.2s, box-shadow 0.2s;
+    z-index: 5;
+}
+
+.table-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+.table-header {
+    background: #F0F0F0;
+    padding: 4px 8px;
+    font-weight: bold;
+    font-size: 12px;
+    border-bottom: 1px solid #CCC;
+}
+
+.table-fields {
+    padding: 4px 0;
+    font-size: 11px;
+    list-style: none;
+    margin: 0;
+}
+
+.table-fields li {
+    padding: 2px 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* Specific Highlight for Fields */
+.field-highlight {
+    background-color: #FFE8A1;
+    /* Yellow highlight */
+}
+
+.field-pk {
+    font-weight: bold;
+}
+
+/* Relationship Symbols */
+.rel-symbol {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: white;
+    border: 1px solid #666;
+    /* Darker border for visibility */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    z-index: 4;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    color: #333;
+}
+
+/* Hit Area for Lines */
+.line-hit-area {
+    position: absolute;
+    cursor: pointer;
+    z-index: 2;
+}
+
+/* New Toolbar Styles & Interactions */
+.separator-v {
+    width: 2px;
+    height: 48px;
+    background-color: transparent;
+    border-left: 1px solid var(--access-border);
+    margin: 0 10px;
+    opacity: 0.5;
+}
+
+.clickable-tool {
+    cursor: pointer;
+}
+
+.clickable-tool.active-tool {
+    background-color: #F8D9D9;
+    /* Light red/pink logic */
+    outline: 1px solid var(--access-red);
+    border-radius: 4px;
+}
+
+/* Grid & Row Visibilities */
+.row-hidden {
+    display: none !important;
+}
+
+/* Modal Overlay System */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(1px);
+    transition: all 0.2s;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none !important;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+/* Embedded Modal (Non-blocking side popup) */
+.simulation-container {
+    position: relative;
+    /* Ensure absolute positioning works inside */
+}
+
+.modal-overlay.sim-modal-embedded {
+    position: absolute !important;
+    top: 160px;
+    left: auto;
+    right: 20px;
+    bottom: auto;
+    width: 320px;
+    height: auto;
+    background: transparent;
+    backdrop-filter: none;
+    display: block;
+    pointer-events: none;
+    /* Allow clicking through empty space */
+    padding: 0;
+    z-index: 100;
+}
+
+.modal-overlay.sim-modal-embedded .modern-dialog {
+    margin: 0;
+    width: 100%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #c0c0c0;
+    pointer-events: auto;
+    /* Re-enable interaction */
+}
+
+.modal-overlay.sim-modal-embedded.hidden {
+    display: none !important;
+}
+
+/* Adjust Design Grid */
+/* Adjust Design Grid (Matching Field Properties Style) */
+.design-grid {
+    border-collapse: collapse;
+    background-color: white;
+    width: 100%;
+}
+
+.design-grid tr {
+    border-bottom: 1px solid #eee;
+}
+
+.design-grid th {
+    background-color: #f0f0f0;
+    color: #333;
+    font-weight: 500;
+    text-align: left;
+    padding: 6px 12px;
+    border-right: 1px solid #d0d0d0;
+    width: 140px;
+    /* Fixed width for label column */
+    border-bottom: 1px solid #eee;
+    /* Ensure row lines */
+}
+
+.design-grid td {
+    padding: 6px 12px;
+    border-right: 1px solid #eee;
+    /* Light divider between value columns */
+    border-bottom: 1px solid #eee;
+    color: #000;
+    background-color: #fff;
+}
+
+/* Specific highlighting for interactivity */
+.design-grid tr:hover th {
+    background-color: #e8e8e8;
+}
+
+.design-grid tr:hover td {
+    background-color: #fff9e6;
+    /* Consistent with properties hover */
+}
+
+/* CheckSquare Icon size */
+.icon-sm {
+    width: 14px;
+    height: 14px;
+    color: var(--text-primary);
+}
