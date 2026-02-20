@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/simulation.css">
     <style>
-        /* Forms Page Specific Styles */
         .workspace {
             position: relative;
             height: 600px;
@@ -41,7 +40,6 @@
             display: flex;
         }
 
-        /* Form View Specifics */
         .form-canvas {
             background-color: #fff;
             margin: 20px;
@@ -55,7 +53,6 @@
 
         .mock-form-title {
             background-color: var(--access-red);
-            /* Access color */
             padding: 10px 15px;
             color: white;
             font-weight: bold;
@@ -125,10 +122,8 @@
             border-color: #666;
         }
 
-        /* Design View Specifics */
         .design-canvas {
             background-color: #f0f0f0;
-            /* Outer gray */
             height: 100%;
             position: relative;
             overflow-y: auto;
@@ -137,7 +132,6 @@
 
         .design-band {
             border: 1px solid #ccc;
-            /* Lighter border */
             background: #e0e0e0;
             margin-bottom: 0;
             font-size: 11px;
@@ -182,7 +176,6 @@
             font-weight: bold;
         }
 
-        /* Toolbar Icons Override */
         .tool-icon-box {
             display: flex;
             flex-direction: column;
@@ -191,27 +184,22 @@
             padding: 5px 10px;
             border: 1px solid transparent;
             cursor: default;
-            /* Default no cursor */
             border-radius: 3px;
             min-width: 60px;
         }
 
-        /* Specific clickable ones */
         .clickable-tool {
             cursor: pointer;
             background-color: #fff;
-            /* Slight affordance */
         }
 
         .clickable-tool:hover {
             background-color: #ffe6e6;
-            /* Light red hover */
             border-color: var(--access-red);
         }
 
         .tool-icon-box:not(.clickable-tool):hover {
             background-color: #e0e0e0;
-            /* Gray hover for non-clickable info items */
         }
 
         .tool-text {
@@ -220,7 +208,6 @@
             text-align: center;
         }
 
-        /* Wizard Popup Styles */
         .wizard-popup {
             position: absolute;
             top: 50%;
@@ -304,7 +291,6 @@
             display: none !important;
         }
 
-        /* Info Panel Updates */
         .info-panel {
             transition: all 0.3s ease;
         }
@@ -373,7 +359,7 @@
                                     ID:</span>
                                 <input type="text" class="mock-field-input interactive-hover" value="STU-001" readonly
                                     data-title="Data Field (Text Box)"
-                                    data-info="Kotak input (*Text Box*) yang terikat langsung (*bound*) ke sebuah kolom di dalam tabel. Apa yang diketik di sini akan tersimpan ke dalam database.">
+                                    data-info="Kotak input (Text Box) yang terikat langsung (bound) ke sebuah kolom di dalam tabel. Apa yang diketik di sini akan tersimpan ke dalam database.">
                             </div>
                             <div class="mock-field-row">
                                 <span class="mock-field-label interactive-hover" data-title="Field Label"
@@ -381,32 +367,32 @@
                                     Name:</span>
                                 <input type="text" class="mock-field-input interactive-hover" value="Jane Doe" readonly
                                     data-title="Data Field (Text Box)"
-                                    data-info="Kotak input (*Text Box*) yang terikat langsung (*bound*) ke sebuah kolom di dalam tabel. Apa yang diketik di sini akan tersimpan ke dalam database.">
+                                    data-info="Kotak input (Text Box) yang terikat langsung (bound) ke sebuah kolom di dalam tabel. Apa yang diketik di sini akan tersimpan ke dalam database.">
                             </div>
                             <div class="mock-field-row">
                                 <span class="mock-field-label interactive-hover" data-title="Field Label"
                                     data-info="Teks statis yang mendeskripsikan informasi apa yang harus dimasukkan ke kotak di sebelahnya. Sebaiknya disamakan dengan nama kolom di tabel agar jelas.">Major:</span>
                                 <input type="text" class="mock-field-input interactive-hover" value="Computer Science"
                                     readonly data-title="Data Field (Text Box)"
-                                    data-info="Kotak input (*Text Box*) yang terikat langsung (*bound*) ke sebuah kolom di dalam tabel. Apa yang diketik di sini akan tersimpan ke dalam database.">
+                                    data-info="Kotak input (Text Box) yang terikat langsung (bound) ke sebuah kolom di dalam tabel. Apa yang diketik di sini akan tersimpan ke dalam database.">
                             </div>
                         </div>
                         <div class="mock-form-footer">
                             <button class="mock-btn interactive-hover" data-title="Navigation Button"
-                                data-info="Tombol navigasi untuk berpindah melihat data siswa sebelumnya (*Previous*) atau data siswa selanjutnya (*Next*).">Previous
+                                data-info="Tombol navigasi untuk berpindah melihat data siswa sebelumnya (Previous) atau data siswa selanjutnya (Next).">Previous
                                 Record</button>
                             <button class="mock-btn interactive-hover" data-title="Navigation Button"
-                                data-info="Tombol navigasi untuk berpindah melihat data siswa sebelumnya (*Previous*) atau data siswa selanjutnya (*Next*).">Next
+                                data-info="Tombol navigasi untuk berpindah melihat data siswa sebelumnya (Previous) atau data siswa selanjutnya (Next).">Next
                                 Record</button>
                             <span style="flex-grow:1"></span>
                             <button class="mock-btn interactive-hover" data-title="Action Button"
-                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">Add
+                                data-info="Tombol perintah eksekusi (Command Button). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (Add) atau Menghapus (Delete) data.">Add
                                 Record</button>
                             <button class="mock-btn interactive-hover" data-title="Action Button"
-                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">Delete
+                                data-info="Tombol perintah eksekusi (Command Button). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (Add) atau Menghapus (Delete) data.">Delete
                                 Record</button>
                             <button class="mock-btn interactive-hover" data-title="Action Button"
-                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">Main
+                                data-info="Tombol perintah eksekusi (Command Button). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (Add) atau Menghapus (Delete) data.">Main
                                 Form</button>
                         </div>
 
@@ -484,7 +470,7 @@
 
                         <div class="design-band">Detail</div>
                         <div class="design-area interactive-hover" style="height: 200px;" data-title="Detail Section"
-                            data-info="Area paling penting dalam form. Di sinilah kamu meletakkan Label dan Text Box. Bagian ini akan menampilkan data *record* dari tabel secara dinamis.">
+                            data-info="Area paling penting dalam form. Di sinilah kamu meletakkan Label dan Text Box. Bagian ini akan menampilkan data record dari tabel secara dinamis.">
                             <!-- Field 1 -->
                             <div class="design-control interactive-hover"
                                 style="top:20px; left:20px; width:100px; height:22px; background:transparent; border:none; text-align:right; border:1px dotted #ccc;"
@@ -495,7 +481,7 @@
                             <div class="design-control interactive-hover"
                                 style="top:20px; left:130px; width:250px; height:22px; font-weight:bold;"
                                 data-title="Text Box Control (Bound)"
-                                data-info="Di dalam Design View, kotak ini tidak menampilkan data asli, melainkan hanya menampilkan nama *field* (kolom) yang dihubungkan ke tabel.">
+                                data-info="Di dalam Design View, kotak ini tidak menampilkan data asli, melainkan hanya menampilkan nama field (kolom) yang dihubungkan ke tabel.">
                                 Data
                             </div>
 
@@ -509,7 +495,7 @@
                             <div class="design-control interactive-hover"
                                 style="top:50px; left:130px; width:250px; height:22px; font-weight:bold;"
                                 data-title="Text Box Control (Bound)"
-                                data-info="Di dalam Design View, kotak ini tidak menampilkan data asli, melainkan hanya menampilkan nama *field* (kolom) yang dihubungkan ke tabel.">
+                                data-info="Di dalam Design View, kotak ini tidak menampilkan data asli, melainkan hanya menampilkan nama field (kolom) yang dihubungkan ke tabel.">
                                 Data
                             </div>
 
@@ -523,7 +509,7 @@
                             <div class="design-control interactive-hover"
                                 style="top:80px; left:130px; width:250px; height:22px; font-weight:bold;"
                                 data-title="Text Box Control (Bound)"
-                                data-info="Di dalam Design View, kotak ini tidak menampilkan data asli, melainkan hanya menampilkan nama *field* (kolom) yang dihubungkan ke tabel.">
+                                data-info="Di dalam Design View, kotak ini tidak menampilkan data asli, melainkan hanya menampilkan nama field (kolom) yang dihubungkan ke tabel.">
                                 Data
                             </div>
 
@@ -537,7 +523,7 @@
                             <div class="design-control interactive-hover"
                                 style="top:110px; left:130px; width:250px; height:22px; font-weight:bold;"
                                 data-title="Text Box Control (Bound)"
-                                data-info="Di dalam Design View, kotak ini tidak menampilkan data asli, melainkan hanya menampilkan nama *field* (kolom) yang dihubungkan ke tabel.">
+                                data-info="Di dalam Design View, kotak ini tidak menampilkan data asli, melainkan hanya menampilkan nama field (kolom) yang dihubungkan ke tabel.">
                                 Data
                             </div>
 
@@ -546,35 +532,35 @@
                         <div class="design-band">Form Footer</div>
                         <div class="design-area interactive-hover" style="height: 80px;"
                             data-title="Form Footer Section"
-                            data-info="Area bawah form. Sangat ideal untuk meletakkan tombol navigasi (*Next/Prev*) atau tombol operasi form (*Save/Close*).">
+                            data-info="Area bawah form. Sangat ideal untuk meletakkan tombol navigasi (Next/Prev) atau tombol operasi form (Save/Close).">
                             <button class="design-control interactive-hover"
                                 style="top:25px; left:20px; width:100px; height:30px; background:#d0dafd; border:1px solid #777;"
                                 data-title="Action Button"
-                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">
+                                data-info="Tombol perintah eksekusi (Command Button). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (Add) atau Menghapus (Delete) data.">
                                 Previous Record
                             </button>
                             <button class="design-control interactive-hover"
                                 style="top:25px; left:130px; width:100px; height:30px; background:#d0dafd; border:1px solid #777;"
                                 data-title="Action Button"
-                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">
+                                data-info="Tombol perintah eksekusi (Command Button). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (Add) atau Menghapus (Delete) data.">
                                 Next Record
                             </button>
                             <button class="design-control interactive-hover"
                                 style="top:25px; left:240px; width:100px; height:30px; background:#d0dafd; border:1px solid #777;"
                                 data-title="Action Button"
-                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">
+                                data-info="Tombol perintah eksekusi (Command Button). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (Add) atau Menghapus (Delete) data.">
                                 Add Record
                             </button>
                             <button class="design-control interactive-hover"
                                 style="top:25px; left:350px; width:100px; height:30px; background:#d0dafd; border:1px solid #777;"
                                 data-title="Action Button"
-                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">
+                                data-info="Tombol perintah eksekusi (Command Button). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (Add) atau Menghapus (Delete) data.">
                                 Delete Record
                             </button>
                             <button class="design-control interactive-hover"
                                 style="top:25px; left:460px; width:100px; height:30px; background:#d0dafd; border:1px solid #777;"
                                 data-title="Action Button"
-                                data-info="Tombol perintah eksekusi (*Command Button*). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (*Add*) atau Menghapus (*Delete*) data.">
+                                data-info="Tombol perintah eksekusi (Command Button). Berfungsi untuk mengeksekusi aksi khusus seperti Menambah (Add) atau Menghapus (Delete) data.">
                                 Main Form
                             </button>
                         </div>
@@ -613,23 +599,23 @@
                                                 <div class="wizard-list" id="wizard-category-list">
                                                     <div class="wizard-list-item selected interactive-hover"
                                                         data-category="navigation" data-title="Record Navigation"
-                                                        data-info="Perintah untuk berpindah antar data. Contoh aksinya: *Go To Next Record*, *Go To Previous Record*, atau *Find Record*.">
+                                                        data-info="Perintah untuk berpindah antar data. Contoh aksinya: Go To Next Record, Go To Previous Record, atau Find Record.">
                                                         Record Navigation</div>
                                                     <div class="wizard-list-item interactive-hover"
                                                         data-category="operations" data-title="Record Operations"
-                                                        data-info="Perintah untuk memanipulasi data di tabel. Contoh aksinya: Menambah (*Add New Record*), Menyimpan (*Save Record*), atau Menghapus (*Delete Record*).">
+                                                        data-info="Perintah untuk memanipulasi data di tabel. Contoh aksinya: Menambah (Add New Record), Menyimpan (Save Record), atau Menghapus (Delete Record).">
                                                         Record Operations</div>
                                                     <div class="wizard-list-item interactive-hover" data-category="form"
                                                         data-title="Form Operations"
-                                                        data-info="Perintah yang mengatur form itu sendiri. Contoh aksinya: Membuka form lain (*Open Form*) atau menutup form yang sedang aktif (*Close Form*).">
+                                                        data-info="Perintah yang mengatur form itu sendiri. Contoh aksinya: Membuka form lain (Open Form) atau menutup form yang sedang aktif (Close Form).">
                                                         Form Operations</div>
                                                     <div class="wizard-list-item interactive-hover"
                                                         data-category="report" data-title="Report Operations"
-                                                        data-info="Perintah yang berhubungan dengan pencetakan. Contoh aksinya: Membuka pratinjau laporan (*Preview Report*) atau langsung mencetak ke printer (*Print Report*).">
+                                                        data-info="Perintah yang berhubungan dengan pencetakan. Contoh aksinya: Membuka pratinjau laporan (Preview Report) atau langsung mencetak ke printer (Print Report).">
                                                         Report Operations</div>
                                                     <div class="wizard-list-item interactive-hover"
                                                         data-category="application" data-title="Application"
-                                                        data-info="Berisi perintah tingkat tinggi, seperti *Quit Application* untuk keluar dari program Microsoft Access secara keseluruhan.">
+                                                        data-info="Berisi perintah tingkat tinggi, seperti Quit Application untuk keluar dari program Microsoft Access secara keseluruhan.">
                                                         Application</div>
                                                     <div class="wizard-list-item interactive-hover" data-category="misc"
                                                         data-title="Miscellaneous"
@@ -689,7 +675,7 @@
             <div class="info-content">
                 <h2 id="info-title" class="fade-in">Forms</h2>
                 <p id="info-desc" class="fade-in">
-                    Form adalah antarmuka (*interface*) agar user bisa menginput data dengan mudah tanpa melihat tabel
+                    Form adalah antarmuka (interface) agar user bisa menginput data dengan mudah tanpa melihat tabel
                     mentah. Form berfungsi ganda sebagai alat input sekaligus output data. Beralihlah ke tab 'Design
                     View' untuk melihat bagaimana form disusun!
                 </p>
@@ -751,7 +737,7 @@
             { icon: 'layout-template', title: 'Form (Standard)', text: 'Form', info: 'Membuat form standar yang menampilkan satu record per layar secara instan. Tampilannya sederhana dan langsung jadi.', clickable: false },
             { icon: 'drafting-compass', title: 'Form Design', text: 'Form Design', info: 'Membuat form kosong baru di layar Design View, memberikanmu kontrol penuh dari awal untuk mendesain tata letak.', clickable: false },
             { icon: 'square', title: 'Blank Form', text: 'Blank Form', info: 'Membuat form kosong langsung di tampilan Layout View agar bisa disesuaikan sambil melihat datanya.', clickable: false },
-            { icon: 'wand-2', title: 'Form Wizard', text: 'Form Wizard', info: 'Fitur panduan otomatis yang akan menanyakan langkah-demi-langkah *field* apa saja yang ingin kamu masukkan untuk membangun sebuah form.', clickable: true, id: 'btn-form-wizard' },
+            { icon: 'wand-2', title: 'Form Wizard', text: 'Form Wizard', info: 'Fitur panduan otomatis yang akan menanyakan langkah-demi-langkah field apa saja yang ingin kamu masukkan untuk membangun sebuah form.', clickable: true, id: 'btn-form-wizard' },
             { icon: 'table-rows-split', title: 'Multiple Items Form', text: 'Multiple Items', info: 'Mirip tabel biasa, tetapi bisa dikustomisasi dengan tombol atau warna. Menampilkan banyak record sekaligus dalam satu layar (continuous form).', clickable: false },
             { icon: 'navigation', title: 'Navigation Form', text: 'Navigation', info: 'Form khusus yang berfungsi sebagai "Menu Utama" atau dashboard. Berisi tab/tombol untuk membuka form atau report lain, membuat aplikasi terlihat seperti website profesional.', clickable: false }
         ];
@@ -896,8 +882,8 @@
                 actions: [
                     { name: 'Mail Report', desc: 'Melampirkan laporan (report) secara otomatis ke dalam email untuk dikirim ke orang lain.' },
                     { name: 'Open Report', desc: 'Membuka sebuah laporan dalam tampilan standar untuk dilihat.' },
-                    { name: 'Preview Report', desc: 'Membuka laporan dalam mode *Print Preview* agar user bisa melihat persis bagaimana laporan tersebut akan tercetak di kertas.' },
-                    { name: 'Print Report', desc: 'Langsung mengirimkan dokumen laporan (report) ke mesin printer tanpa membuka mode *preview* terlebih dahulu.' },
+                    { name: 'Preview Report', desc: 'Membuka laporan dalam mode Print Preview agar user bisa melihat persis bagaimana laporan tersebut akan tercetak di kertas.' },
+                    { name: 'Print Report', desc: 'Langsung mengirimkan dokumen laporan (report) ke mesin printer tanpa membuka mode preview terlebih dahulu.' },
                     { name: 'Send Report to File', desc: 'Mengekspor atau menyimpan laporan menjadi format file eksternal (seperti PDF atau format teks).' }
                 ]
             },
@@ -912,8 +898,8 @@
                 actions: [
                     { name: 'Auto Dialer', desc: 'Memerintahkan sistem untuk secara otomatis memanggil nomor telepon yang ada di data saat ini (membutuhkan modem telepon yang terhubung).' },
                     { name: 'Print Table', desc: 'Mencetak keseluruhan baris dan kolom dari sebuah tabel langsung ke printer.' },
-                    { name: 'Run Macro', desc: 'Menjalankan *Macro* (kumpulan perintah otomatis) yang sudah diprogram sebelumnya di dalam database.' },
-                    { name: 'Run Query', desc: 'Mengeksekusi sebuah *Query*, baik untuk menampilkan hasil pencarian maupun menjalankan perintah *Update*, *Append*, atau *Delete*.' }
+                    { name: 'Run Macro', desc: 'Menjalankan Macro (kumpulan perintah otomatis) yang sudah diprogram sebelumnya di dalam database.' },
+                    { name: 'Run Query', desc: 'Mengeksekusi sebuah Query, baik untuk menampilkan hasil pencarian maupun menjalankan perintah Update, Append, atau Delete.' }
                 ]
             }
         };
