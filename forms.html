@@ -397,57 +397,61 @@
                         </div>
 
                         <!-- Form Wizard Popup -->
-                        <div id="form-wizard-popup" class="wizard-popup hidden">
-                            <div class="wizard-header">
-                                <span>Form Wizard</span>
-                                <span style="cursor:pointer" onclick="togglePopup('form-wizard-popup')">X</span>
-                            </div>
-                            <div class="wizard-body">
-                                <div
-                                    style="display:flex; gap:10px; align-items:center; background:#ffcb05; padding:8px; border:1px solid #e0b000;">
-                                    <div><i data-lucide="table-2" size="32"></i></div>
-                                    <div>Which fields do you want on your form?<br>You can choose from more than one
-                                        table or query.</div>
+                        <div id="form-wizard-popup" class="wizard-popup hidden"
+                            style="max-width: 95vw; overflow-x: auto;">
+                            <div style="min-width: 480px;">
+                                <div class="wizard-header">
+                                    <span>Form Wizard</span>
+                                    <span style="cursor:pointer" onclick="togglePopup('form-wizard-popup')">X</span>
                                 </div>
-                                <div>
-                                    <label
-                                        style="font-weight:bold; display:block; margin-bottom:2px;">Tables/Queries</label>
-                                    <select style="width:200px; padding:2px;">
-                                        <option>Table: Tabel Anggota</option>
-                                    </select>
-                                </div>
-                                <div class="wizard-content-row">
-                                    <div style="flex:1">
-                                        <div style="font-weight:bold; margin-bottom:2px;">Available Fields:</div>
-                                        <div class="wizard-list">
-                                            <div class="wizard-list-item selected">Nama Lengkap</div>
-                                            <div class="wizard-list-item">Alamat</div>
-                                            <div class="wizard-list-item">NoTelp</div>
-                                            <div class="wizard-list-item">Email</div>
-                                            <div class="wizard-list-item">Tanggal Daftar</div>
-                                            <div class="wizard-list-item">Status</div>
-                                        </div>
-                                    </div>
+                                <div class="wizard-body">
                                     <div
-                                        style="display:flex; flex-direction:column; justify-content:center; gap:5px; padding:0 5px;">
-                                        <button class="wizard-btn">&gt;</button>
-                                        <button class="wizard-btn">&gt;&gt;</button>
-                                        <button class="wizard-btn">&lt;</button>
-                                        <button class="wizard-btn">&lt;&lt;</button>
+                                        style="display:flex; gap:10px; align-items:center; background:#ffcb05; padding:8px; border:1px solid #e0b000;">
+                                        <div><i data-lucide="table-2" size="32"></i></div>
+                                        <div>Which fields do you want on your form?<br>You can choose from more than one
+                                            table or query.</div>
                                     </div>
-                                    <div style="flex:1">
-                                        <div style="font-weight:bold; margin-bottom:2px;">Selected Fields:</div>
-                                        <div class="wizard-list">
-                                            <div class="wizard-list-item">ID Anggota</div>
+                                    <div>
+                                        <label
+                                            style="font-weight:bold; display:block; margin-bottom:2px;">Tables/Queries</label>
+                                        <select style="width:200px; padding:2px;">
+                                            <option>Table: Tabel Anggota</option>
+                                        </select>
+                                    </div>
+                                    <div class="wizard-content-row">
+                                        <div style="flex:1">
+                                            <div style="font-weight:bold; margin-bottom:2px;">Available Fields:</div>
+                                            <div class="wizard-list">
+                                                <div class="wizard-list-item selected">Nama Lengkap</div>
+                                                <div class="wizard-list-item">Alamat</div>
+                                                <div class="wizard-list-item">NoTelp</div>
+                                                <div class="wizard-list-item">Email</div>
+                                                <div class="wizard-list-item">Tanggal Daftar</div>
+                                                <div class="wizard-list-item">Status</div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            style="display:flex; flex-direction:column; justify-content:center; gap:5px; padding:0 5px;">
+                                            <button class="wizard-btn">&gt;</button>
+                                            <button class="wizard-btn">&gt;&gt;</button>
+                                            <button class="wizard-btn">&lt;</button>
+                                            <button class="wizard-btn">&lt;&lt;</button>
+                                        </div>
+                                        <div style="flex:1">
+                                            <div style="font-weight:bold; margin-bottom:2px;">Selected Fields:</div>
+                                            <div class="wizard-list">
+                                                <div class="wizard-list-item">ID Anggota</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="wizard-footer">
-                                <button class="wizard-btn" onclick="togglePopup('form-wizard-popup')">Cancel</button>
-                                <button class="wizard-btn">&lt; Back</button>
-                                <button class="wizard-btn">Next &gt;</button>
-                                <button class="wizard-btn">Finish</button>
+                                <div class="wizard-footer">
+                                    <button class="wizard-btn"
+                                        onclick="togglePopup('form-wizard-popup')">Cancel</button>
+                                    <button class="wizard-btn">&lt; Back</button>
+                                    <button class="wizard-btn">Next &gt;</button>
+                                    <button class="wizard-btn">Finish</button>
+                                </div>
                             </div>
                         </div>
 
